@@ -1,4 +1,4 @@
-function Tile(imgIndex, hasObstacle, obstacleImgIndex){
+function Tile(x, y, imgIndex, hasObstacle, obstacleImgIndex){
 	// Index of the tile image in GameConstant's tileImgs array
 	this.imgIndex = imgIndex;
 	this.hasObstacle = hasObstacle;
@@ -7,6 +7,7 @@ function Tile(imgIndex, hasObstacle, obstacleImgIndex){
 	this.obstacleImgIndex = obstacleImgIndex;
 }
 
-Tile.prototype.renderTile = function() {
-	return;
+Tile.prototype.drawTile = function(x, y, xOffset, yOffset, ctx) {
+	ctx.drawImage(gs.c.tileImgs[this.imgIndex], 
+		(x * gs.c.tileSize) + xOffset, (y * gs.c.tileSize) + yOffset);
 };

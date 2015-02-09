@@ -1,38 +1,19 @@
-// Main GameState object
-// Arguments are the dimensions of the canvas
-var gs = new GameState(1024, 512);
-
-function initialize(){
-	addKeyboardEvents();
-	gs.genGameMap();
+function Player(x, y){
+	// X and Y here are actual pixel coordinates, not tiles
+	this.x = x;
+	this.y = y;
+	this.isPressingUp = false;
+	this.isPressingDown = false;
+	this.isPressingLeft = false;
+	this.isPressingRight = false;
 }
 
-function update(){
-	gs.updateFrame();
-	gs.player.updatePos();
+Player.prototype.updatePos = function (){
+	if (this.isPressingUp) this.y -= 2;
+	if (this.isPressingDown) this.y += 2;
+	if (this.isPressingLeft) this.x -= 2;
+	if (this.isPressingRight) this.x += 2;
 }
-
-function draw(ctx){
-	gs.drawFrame(ctx);
-}
-
-function runGameLoop(ctx){
-	update();
-	draw(ctx);
-}
-
-function runGame(){
-	var ctx = $("#canvas")[0].getContext("2d");
-	initialize();
-	window.setInterval(function(){
-		runGameLoop(ctx);
-	}, 20);
-}
-
-$(window).load(function(){
-	gs.c.loadAllImages(runGame);
-});
-
 
 function addKeyboardEvents(){
 	document.addEventListener("keydown", function(e){

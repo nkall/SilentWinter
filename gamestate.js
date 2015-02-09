@@ -2,39 +2,67 @@
  *	This file comprises the main game state object
  */
 
-var gs = new GameState();
+function GameState(canvasWidth, canvasHeight){
+	this.c = new GameConstants(canvasWidth, canvasHeight);
 
-function GameState(){
-	this.constant = new GameConstants();
-	// Uninitialized until genGameMap() is called in main
+	// 2d Array of tiles representing the game map
+	// This is uninitialized until genGameMap() is called in main
 	this.map = new Array();
+
+	this.player = new Player((this.c.mapWidth * 
+		this.c.tileSize) / 2, (this.c.mapHeight * 
+		this.c.tileSize) / 2);
+
+	this.frameStartX = 0;
+	this.frameStartY = 0;
+	this.xOffset = 0;
+	this.yOffset = 0;
 }
 
 // This function initiallizes the entire game map in a random fashion. In the
 // future I plan to do things a bit smarter to generate lakes rather than
 // puddles, for example.
 GameState.prototype.genGameMap = function() {
- 	for (var x = 0; x < this.constant.mapWidth; x++) {
+ 	for (var x = 0; x < this.c.mapWidth; x++) {
  		this.map[x] = new Array();
- 		for (var y = 0; y < this.constant.mapHeight; y++) {
+ 		for (var y = 0; y < this.c.mapHeight; y++) {
  			// Generate random tile image
  			var tileImgIndex = Math.floor(Math.random() * 
- 										  this.constant.tileImgs.length);
+ 								  this.c.tileImgs.length);
  			// Small chance (5%) of generating obstacle
  			if ((Math.floor(Math.random() * 20)) === 0){
  				var obsImgIndex = Math.floor(Math.random() * 
- 										   this.constant.obstacleImgs.length);
- 				this.map[x][y] = new Tile(tileImgIndex, true, null);
+ 								   this.c.obstacleImgs.length);
+ 				this.map[x][y] = new Tile(x, y, tileImgIndex, true, null);
  			} else {
- 				this.map[x][y] = new Tile(tileImgIndex, false, null);
+ 				this.map[x][y] = new Tile(x, y, tileImgIndex, false, null);
  			}
  		}
  	}
 };
 
+GameState.prototype.updateFrame = function (){
+	var firstTilePixX = (this.player.x - this.c.canvasPixWidth / 2);
+	var firstTilePixY = (this.player.y - this.c.canvasPixHeight / 2);
+	this.frameStartX = Math.floor(firstTilePixX / this.c.tileSize);
+	this.frameStartY = Math.floor(firstTilePixY / this.c.tileSize);
+	this.xOffset = -(this.player.x % this.c.tileSize);
+	this.yOffset = -(this.player.y % this.c.tileSize);
+};
+
+GameState.prototype.drawFrame = function (ctx){
+	for (var x = 0; x < this.c.canvasWidth; x++) {
+		for (var y = 0; y < this.c.canvasHeight; y++) {
+			this.map[x + this.frameStartX][y + this.frameStartY].drawTile(x, y, this.xOffset, this.yOffset, ctx);
+		}
+	}
+};
+
 function GameConstants(canvasPixWidth, canvasPixHeight){
 	this.tileSize = 32;      // Pixel length of (square) tiles
 
+	this.canvasPixWidth = canvasPixWidth;
+	this.canvasPixHeight = canvasPixHeight;
 	// Tiles rendered on canvas at one time
 	this.canvasWidth = (canvasPixWidth / this.tileSize) + 2;
 	this.canvasHeight = (canvasPixHeight / this.tileSize) + 2;
@@ -49,7 +77,7 @@ function GameConstants(canvasPixWidth, canvasPixHeight){
 	this.obstacleImgs = [];
 }
 
-GameConstants.prototype.loadAllImages = function(callbackFn) {
+GameConstants.prototype.loadAllImages = function (callbackFn) {
 	// These should be updated as image file names change
 	var playerImgName = 'player.png';
 	var tileImgNames = ['terrain0.jpg', 'terrain1.gif', 'terrain2.png'];
