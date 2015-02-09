@@ -1,5 +1,6 @@
 /*
- *	This file comprises the main game state object
+ *	This file comprises the main game state object, which keeps track of
+ *  much of the game's current status, including constants
  */
 
 function GameState(canvasWidth, canvasHeight){
@@ -9,15 +10,19 @@ function GameState(canvasWidth, canvasHeight){
 	// This is uninitialized until genGameMap() is called in main
 	this.map = new Array();
 
-	this.player = new Player(0,0);//this.c.mapPixWidth / 2, this.c.mapPixWidth / 2);
+	// The player character -- see player.js for more information
+	this.player = new Player(this.c.mapPixWidth / 2, this.c.mapPixWidth / 2);
 
+	// These values are set with updateFrame()
+	// The indices of the this.map tile that is top-leftmost on the canvas
 	this.frameStartX = 0;
 	this.frameStartY = 0;
+	// Pixel distance from (0,0) that the top-leftmost tile should be drawn
 	this.xOffset = 0;
 	this.yOffset = 0;
 }
 
-// This function initiallizes the entire game map in a random fashion. In the
+// This function initializes the entire game map in a random fashion. In the
 // future I plan to do things a bit smarter to generate lakes rather than
 // puddles, for example.
 GameState.prototype.genGameMap = function() {
@@ -31,13 +36,14 @@ GameState.prototype.genGameMap = function() {
  			// Small chance of generating obstacle
  			if ((Math.floor(Math.random() * this.c.obstacleSpawnOdds)) === 5){
  				this.map[x][y] = new Tile(tileImgIndex, true);
- 			} else {
+ 			} else { // Otherwise, empty tile
  				this.map[x][y] = new Tile(tileImgIndex, false);
  			}
  		}
  	}
 };
 
+// Updates the state of the frame (tiles displayed on canvas) based on player position
 GameState.prototype.updateFrame = function (){
 	var firstTilePixX = (this.player.x - this.c.canvasPixWidth / 2);
 	var firstTilePixY = (this.player.y - this.c.canvasPixHeight / 2);
@@ -59,41 +65,50 @@ GameState.prototype.drawFrame = function (ctx){
 			if (yCoord < 0){ yCoord += this.c.mapHeight; }
 			if (yCoord >= this.c.mapHeight){ yCoord -= this.c.mapHeight; }
 
+			// Draw the tile at the given coordinates on screen
 			var currTile = this.map[xCoord][yCoord];
 			currTile.drawTile(x, y, this.xOffset, this.yOffset, ctx);
+			// Draw the obstacle if it has one
 			if (currTile.hasObstacle){
 				currTile.obstacle.drawObstacle(x, y, this.xOffset, this.yOffset, ctx);
 			}
 		}
 	}
-	this.player.drawPlayer(ctx);
 };
 
+// This function contains values not likely to change during the game,
+// i.e. a form of global constants
 function GameConstants(canvasPixWidth, canvasPixHeight){
 	this.tileSize = 32;      // Pixel length of (square) tiles
 
+	// Size of the canvas
 	this.canvasPixWidth = canvasPixWidth;
 	this.canvasPixHeight = canvasPixHeight;
 	// Tiles rendered on canvas at one time
 	this.canvasWidth = (canvasPixWidth / this.tileSize) + 2;
 	this.canvasHeight = (canvasPixHeight / this.tileSize) + 2;
 
-	this.mapWidth = 500;	// Width of map in tiles
-	this.mapHeight = 500;	// Length of map in tiles
+	// Size of the map in tiles
+	this.mapWidth = 500;
+	this.mapHeight = 500;
+	// Likewise, in pixels
 	this.mapPixWidth = this.mapWidth * this.tileSize;
 	this.mapPixHeight = this.mapHeight * this.tileSize
 
 	// Images used in displaying various map elements/items/characters
-	// Uninitialized until loadAllImages() is called in main
+	// Remains uninitialized until loadAllImages() is called in main
 	this.playerImg = null;
 	this.tileImgs = [];
 	this.buildingImgs = [];
 	this.obstacleImgs = [];
 
+	// Odds of spawning an obstacle (1 in 'x')
 	this.obstacleSpawnOdds = 20;
+	// Odds of an obstacle being a building (1 in 'x')
 	this.buildingSpawnOdds = 20;
 }
 
+// Preloads all necessary images for the game
 GameConstants.prototype.loadAllImages = function (callbackFn) {
 	// These should be updated as image file names change
 	var playerImgName = 'player.png';
@@ -104,7 +119,7 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 
 	// Keep count of loaded images to make sure each is loaded before being
 	// displayed. Otherwise, this would be callback hell, since image loading
-	// is asynchronous in nature.
+	// is asynchronous.
 	var loadCount = 0
 	var loadLimit = 1 + tileImgNames.length + obstacleImgNames.length +
 			buildingImgNames.length;

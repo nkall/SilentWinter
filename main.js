@@ -1,4 +1,9 @@
-// Main GameState object
+/*
+ *  This file comprises the main game loop, plus a few initialization 
+ *  and utility functions
+ */
+
+// Main GameState object (see gamestate.js)
 // Arguments are the dimensions of the canvas
 var gs = new GameState(1024, 512);
 
@@ -14,26 +19,30 @@ function update(){
 
 function draw(ctx){
 	gs.drawFrame(ctx);
+	gs.player.drawPlayer(ctx);
 }
 
+// Main game loop
 function runGameLoop(ctx){
 	update();
 	draw(ctx);
 }
 
+// Initialize everything, then run the game
 function runGame(){
 	var ctx = $("#canvas")[0].getContext("2d");
 	initialize();
 	window.setInterval(function(){
 		runGameLoop(ctx);
-	}, 10);
+	}, 20); // FPS can be changed here
 }
 
 $(window).load(function(){
 	gs.c.loadAllImages(runGame);
 });
 
-
+// Respond to user keyboard input
+// So far, this only applies to player movement
 function addKeyboardEvents(){
 	document.addEventListener("keydown", function(e){
 		switch(e.key){
