@@ -2,71 +2,27 @@ function Player(x, y){
 	// X and Y here are actual pixel coordinates, not tiles
 	this.x = x;
 	this.y = y;
+	this.body_size = 16;
 	this.isPressingUp = false;
 	this.isPressingDown = false;
 	this.isPressingLeft = false;
 	this.isPressingRight = false;
 }
 
-Player.prototype.updatePos = function (){
-	if (this.isPressingUp) this.y -= 2;
-	if (this.isPressingDown) this.y += 2;
-	if (this.isPressingLeft) this.x -= 2;
-	if (this.isPressingRight) this.x += 2;
+Player.prototype.drawPlayer = function (ctx){
+	ctx.drawImage(gs.c.playerImg, (gs.c.canvasPixWidth - 
+		this.body_size) / 2, (gs.c.canvasPixHeight - this.body_size) / 2);
 }
+Player.prototype.updatePos = function (){
+	// Update based on keypresses
+	if (this.isPressingUp){ this.y--;}
+	if (this.isPressingDown){ this.y++; }
+	if (this.isPressingLeft){ this.x--; }
+	if (this.isPressingRight){ this.x++; }
 
-function addKeyboardEvents(){
-	document.addEventListener("keydown", function(e){
-		switch(e.key){
-			case "w":
-			case "W":
-			case "Up":
-				gs.player.isPressingUp = true;
-				break;
-			case "s":
-			case "S":
-			case "Down":
-				gs.player.isPressingDown = true;
-				break;
-			case "a":
-			case "A":
-			case "Left":
-				gs.player.isPressingLeft = true;
-				break;
-			case "d":
-			case "D":
-			case "Right":
-				gs.player.isPressingRight = true;
-				break;
-			default:
-				break;
-		}
-	}, false);
-	document.addEventListener("keyup", function(e){
-		switch(e.key){
-			case "w":
-			case "W":
-			case "Up":
-				gs.player.isPressingUp = false;
-				break;
-			case "s":
-			case "S":
-			case "Down":
-				gs.player.isPressingDown = false;
-				break;
-			case "a":
-			case "A":
-			case "Left":
-				gs.player.isPressingLeft = false;
-				break;
-			case "d":
-			case "D":
-			case "Right":
-				gs.player.isPressingRight = false;
-				break;
-			default:
-				break;
-		}
-
-	}, false);
-};
+	// Reset position if walking off map
+	if (this.x < 0){ this.x += gs.c.mapPixWidth; }
+	if (this.x > gs.c.mapPixHeight){ this.x -= gs.c.mapPixHeight; }
+	if (this.y < 0){ this.y += gs.c.mapPixHeight; }
+	if (this.y > gs.c.mapPixHeight){ this.y -= gs.c.mapPixHeight; }
+}

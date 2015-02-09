@@ -26,7 +26,7 @@ function runGame(){
 	initialize();
 	window.setInterval(function(){
 		runGameLoop(ctx);
-	}, 20);
+	}, 10);
 }
 
 $(window).load(function(){
