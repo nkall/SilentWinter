@@ -1,11 +1,12 @@
-function Tile(mapXLoc, mapYLoc, imgIndex){
-	// Coordinates of tile in game map (not canvas)
-	this.x = mapXLoc;
-	this.y = mapYLoc;
+function Tile(imgIndex, hasObstacle, obstacleImgIndex){
 	// Index of the tile image in GameConstant's tileImgs array
-	this.imgIndex = imgIndex
+	this.imgIndex = imgIndex;
+	this.hasObstacle = hasObstacle;
+	// Index of obstacle image in obstacleImgs
+	// Should be null if hasObstacle is false
+	this.obstacleImgIndex = obstacleImgIndex;
 }
 
 Tile.prototype.renderTile = function() {
-	
+	return;
 };
