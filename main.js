@@ -44,26 +44,27 @@ $(window).load(function(){
 // Respond to user keyboard input
 // So far, this only applies to player movement
 function addKeyboardEvents(){
+	// Arrow keys and WASD both work for input
 	document.addEventListener("keydown", function(e){
-		switch(e.key){
-			case "w":
-			case "W":
-			case "Up":
+		switch(e.keyCode){
+			// Up
+			case 87:
+			case 38:
 				gs.player.isPressingUp = true;
 				break;
-			case "s":
-			case "S":
-			case "Down":
+			// Down
+			case 83:
+			case 40:
 				gs.player.isPressingDown = true;
 				break;
-			case "a":
-			case "A":
-			case "Left":
+			// Left
+			case 65:
+			case 37:
 				gs.player.isPressingLeft = true;
 				break;
-			case "d":
-			case "D":
-			case "Right":
+			// Right
+			case 68:
+			case 39:
 				gs.player.isPressingRight = true;
 				break;
 			default:
@@ -71,25 +72,25 @@ function addKeyboardEvents(){
 		}
 	}, false);
 	document.addEventListener("keyup", function(e){
-		switch(e.key){
-			case "w":
-			case "W":
-			case "Up":
+		switch(e.keyCode){
+			// Up
+			case 87:
+			case 38:
 				gs.player.isPressingUp = false;
 				break;
-			case "s":
-			case "S":
-			case "Down":
+			// Down
+			case 83:
+			case 40:
 				gs.player.isPressingDown = false;
 				break;
-			case "a":
-			case "A":
-			case "Left":
+			// Left
+			case 65:
+			case 37:
 				gs.player.isPressingLeft = false;
 				break;
-			case "d":
-			case "D":
-			case "Right":
+			// Right
+			case 68:
+			case 39:
 				gs.player.isPressingRight = false;
 				break;
 			default:
