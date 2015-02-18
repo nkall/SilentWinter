@@ -30,9 +30,12 @@ GameState.prototype.genGameMap = function() {
  		this.map[x] = new Array();
  		for (var y = 0; y < this.c.mapHeight; y++) {
  			// Generate random tile image
- 			var tileImgIndex = Math.floor(Math.random() * 
+ 			if (Math.floor(Math.random() * this.c.altTileSpawnOdds) === 0){
+ 				var tileImgIndex = Math.floor(Math.random() * 
  								  this.c.tileImgs.length);
-
+ 			} else {
+ 				var tileImgIndex = 1;
+ 			}
  			// Small chance of generating obstacle
  			if ((Math.floor(Math.random() * this.c.obstacleSpawnOdds)) === 5){
  				this.map[x][y] = new Tile(tileImgIndex, true);
@@ -103,19 +106,22 @@ function GameConstants(canvasPixWidth, canvasPixHeight){
 	this.obstacleImgs = [];
 
 	// Odds of spawning an obstacle (1 in 'x')
-	this.obstacleSpawnOdds = 20;
+	this.obstacleSpawnOdds = 75;
 	// Odds of an obstacle being a building (1 in 'x')
 	this.buildingSpawnOdds = 20;
+	this.altTileSpawnOdds = 20;
 }
 
 // Preloads all necessary images for the game
 GameConstants.prototype.loadAllImages = function (callbackFn) {
 	// These should be updated as image file names change
 	var playerImgName = 'player.png';
-	var tileImgNames = ['terrain0.jpg', 'terrain1.gif', 'terrain2.png'];
-	var obstacleImgNames = ['obstacle0.png', 'obstacle1.gif', 'obstacle2.png'];
+	var tileImgNames = ['terrain0.png', 'terrain1.png', 'terrain2.png', 
+						'terrain3.png', 'terrain4.png'];
+	var obstacleImgNames = ['obstacle0.png', 'obstacle1.png', 'obstacle2.png',
+							'obstacle3.png'];
 	var buildingImgNames = ['build0.png', 'build1.png', 'build2.png', 
-			'build3.png', 'build4.png']
+							'build3.png', 'build4.png']
 
 	// Keep count of loaded images to make sure each is loaded before being
 	// displayed. Otherwise, this would be callback hell, since image loading
@@ -126,7 +132,7 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 
 	// Load player image
 	this.playerImg = new Image();
-	this.playerImg.src = playerImgName;
+	this.playerImg.src = 'bin/' + playerImgName;
 	this.playerImg.onload = function (){
 		loadCount++;
 		if (loadCount === loadLimit){
@@ -137,7 +143,7 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 	// Load tile images
 	for (var i = 0; i < tileImgNames.length; i++){
 		this.tileImgs[i] = new Image();
-		this.tileImgs[i].src = tileImgNames[i];
+		this.tileImgs[i].src = 'bin/' + tileImgNames[i];
 		this.tileImgs[i].onload = function (){
 			loadCount++;
 			if (loadCount === loadLimit){
@@ -149,7 +155,7 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 	// Load obstacle images
 	for (var i = 0; i < obstacleImgNames.length; i++){
 		this.obstacleImgs[i] = new Image();
-		this.obstacleImgs[i].src = obstacleImgNames[i];
+		this.obstacleImgs[i].src = 'bin/' + obstacleImgNames[i];
 		this.obstacleImgs[i].onload = function (){
 			loadCount++;
 			if (loadCount === loadLimit){
@@ -161,7 +167,7 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 	// Load building images
 	for (var i = 0; i < buildingImgNames.length; i++){
 		this.buildingImgs[i] = new Image();
-		this.buildingImgs[i].src = buildingImgNames[i];
+		this.buildingImgs[i].src = 'bin/' + buildingImgNames[i];
 		this.buildingImgs[i].onload = function (){
 			loadCount++;
 			if (loadCount === loadLimit){
