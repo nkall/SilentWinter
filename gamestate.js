@@ -11,7 +11,10 @@ function GameState(canvasWidth, canvasHeight){
 }
 
 GameState.prototype.update = function (){
-	this.player.updatePos(this.mainMap.mapPixSize.x, this.mainMap.mapPixSize.y);
+	this.player.heat--;
+	if (this.player.heat > 0){
+		this.player.updatePos(this.mainMap.mapPixSize.x, this.mainMap.mapPixSize.y);
+	}
 	this.frame.updateFrame(this.player.loc.x, this.player.loc.y);
 }
 

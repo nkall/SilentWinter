@@ -14,8 +14,10 @@ function Player(x, y){
 	this.isPressingDown = false;
 	this.isPressingLeft = false;
 	this.isPressingRight = false;
-
+	// Pixels moved per frame
 	this.moveSpeed = 2;
+
+	this.heat = 500;
 }
 
 // Returns false if the requested destination is obstructed
@@ -50,7 +52,6 @@ Player.prototype.updatePos = function (mapPixWidth, mapPixHeight){
 }
 
 Player.prototype.drawPlayer = function (ctx){
-	ctx.drawImage(gc.playerImg, (gc.canvasPixWidth - 
-		this.body_size) / 2, (gc.canvasPixHeight - 
-		this.body_size) / 2);
+	ctx.drawImage(gc.playerImg, (gc.canvasPixWidth - this.body_size) / 2, 
+		(gc.canvasPixHeight - this.body_size) / 2);
 }
