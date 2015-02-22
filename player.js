@@ -17,7 +17,7 @@ function Player(x, y){
 	// Pixels moved per frame
 	this.moveSpeed = 2;
 
-	this.heat = 500;
+	this.heat = 2000;
 }
 
 // Returns false if the requested destination is obstructed
