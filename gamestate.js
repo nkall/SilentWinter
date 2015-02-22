@@ -6,13 +6,13 @@
 function GameState(canvasWidth, canvasHeight){
 	this.mainMap = new Map(500, 500);
 	// The player character -- see player.js for more information
-	this.player = new Player(this.mainMap.mapPixWidth / 2, this.mainMap.mapPixHeight / 2);
+	this.player = new Player(this.mainMap.mapPixSize.x / 2, this.mainMap.mapPixSize.y / 2);
 	this.frame = new Frame();
 }
 
 GameState.prototype.update = function (){
-	this.player.updatePos(this.mainMap.mapPixWidth, this.mainMap.mapPixHeight);
-	this.frame.updateFrame(this.player.x, this.player.y);
+	this.player.updatePos(this.mainMap.mapPixSize.x, this.mainMap.mapPixSize.y);
+	this.frame.updateFrame(this.player.loc.x, this.player.loc.y);
 }
 
 GameState.prototype.draw = function (ctx){
@@ -20,10 +20,11 @@ GameState.prototype.draw = function (ctx){
 	gs.player.drawPlayer(ctx);
 }
 
+
 // This function contains values not likely to change during the game,
 // i.e. a form of global constants
-function GameConstants(canvasPixWidth, canvasPixHeight){
-	this.tileSize = 32;      // Pixel length of (square) tiles
+function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
+	this.tileSize = tileSize;      // Pixel length of (square) tiles
 
 	// Size of the canvas
 	this.canvasPixWidth = canvasPixWidth;

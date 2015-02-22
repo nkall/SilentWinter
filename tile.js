@@ -30,9 +30,9 @@ Tile.prototype.addObstacle = function (){
 }
 
 // Draws the tile, without any obstacle
-Tile.prototype.drawTile = function(x, y, xOffset, yOffset, ctx) {
+Tile.prototype.drawTile = function(pixLoc, offset, ctx) {
 	ctx.drawImage(gc.tileImgs[this.imgIndex], 
-		(x * gc.tileSize) + xOffset, (y * gc.tileSize) + yOffset);
+		pixLoc.x + offset.x, pixLoc.y + offset.y);
 };
 
 function Obstacle(isBuilding, imgIndex){
@@ -49,3 +49,23 @@ Obstacle.prototype.drawObstacle = function(x, y, xOffset, yOffset, ctx) {
 			(x * gc.tileSize) + xOffset, (y * gc.tileSize) + yOffset);
 	}
 }
+
+
+function Coord(x, y){
+	this.x = x;
+	this.y = y;
+}
+
+Coord.prototype.set = function(x, y){
+	this.x = x;
+	this.y = y;
+};
+
+Coord.prototype.toPixels = function(){
+	return (new Coord(this.x * gc.tileSize, this.y * gc.tileSize));
+};
+
+Coord.prototype.toTiles = function(){
+	return (new Coord(Math.floor(this.x / gc.tileSize), 
+					  Math.floor(this.y / gc.tileSize)));
+};

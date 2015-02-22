@@ -4,8 +4,8 @@
 
 function Player(x, y){
 	// X and Y here are actual pixel coordinates, not tiles
-	this.x = x;
-	this.y = y;
+	this.loc = new Coord(x,y);
+
 	// Length/width of player's body, in pixels
 	this.body_size = 16;
 
@@ -21,16 +21,16 @@ function Player(x, y){
 // Moves the player based on keypresses
 Player.prototype.updatePos = function (mapPixWidth, mapPixHeight){
 	// Update based on keypresses
-	if (this.isPressingUp){ this.y -= this.moveSpeed;}
-	if (this.isPressingDown){ this.y += this.moveSpeed; }
-	if (this.isPressingLeft){ this.x -= this.moveSpeed; }
-	if (this.isPressingRight){ this.x += this.moveSpeed; }
+	if (this.isPressingUp){ this.loc.y -= this.moveSpeed;}
+	if (this.isPressingDown){ this.loc.y += this.moveSpeed; }
+	if (this.isPressingLeft){ this.loc.x -= this.moveSpeed; }
+	if (this.isPressingRight){ this.loc.x += this.moveSpeed; }
 
 	// Reset position if walking off map
-	if (this.x < 0){ this.x += mapPixWidth; }
-	if (this.x > gc.mapPixWidth){ this.x -= mapPixWidth; }
-	if (this.y < 0){ this.y += mapPixHeight; }
-	if (this.y > gc.mapPixHeight){ this.y -= mapPixHeight; }
+	if (this.loc.x < 0){ this.loc.x += mapPixWidth; }
+	if (this.loc.x > gc.mapPixWidth){ this.loc.x -= mapPixWidth; }
+	if (this.loc.y < 0){ this.loc.y += mapPixHeight; }
+	if (this.loc.y > gc.mapPixHeight){ this.loc.y -= mapPixHeight; }
 }
 
 Player.prototype.drawPlayer = function (ctx){
