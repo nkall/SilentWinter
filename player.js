@@ -14,25 +14,27 @@ function Player(x, y){
 	this.isPressingDown = false;
 	this.isPressingLeft = false;
 	this.isPressingRight = false;
+
+	this.moveSpeed = 2;
 }
 
 // Moves the player based on keypresses
-Player.prototype.updatePos = function (){
+Player.prototype.updatePos = function (mapPixWidth, mapPixHeight){
 	// Update based on keypresses
-	if (this.isPressingUp){ this.y -= 2;}
-	if (this.isPressingDown){ this.y += 2; }
-	if (this.isPressingLeft){ this.x -= 2; }
-	if (this.isPressingRight){ this.x += 2; }
+	if (this.isPressingUp){ this.y -= this.moveSpeed;}
+	if (this.isPressingDown){ this.y += this.moveSpeed; }
+	if (this.isPressingLeft){ this.x -= this.moveSpeed; }
+	if (this.isPressingRight){ this.x += this.moveSpeed; }
 
 	// Reset position if walking off map
-	if (this.x < 0){ this.x += gs.c.mapPixWidth; }
-	if (this.x > gs.c.mapPixHeight){ this.x -= gs.c.mapPixHeight; }
-	if (this.y < 0){ this.y += gs.c.mapPixHeight; }
-	if (this.y > gs.c.mapPixHeight){ this.y -= gs.c.mapPixHeight; }
+	if (this.x < 0){ this.x += mapPixWidth; }
+	if (this.x > gc.mapPixWidth){ this.x -= mapPixWidth; }
+	if (this.y < 0){ this.y += mapPixHeight; }
+	if (this.y > gc.mapPixHeight){ this.y -= mapPixHeight; }
 }
 
 Player.prototype.drawPlayer = function (ctx){
-	ctx.drawImage(gs.c.playerImg, (gs.c.canvasPixWidth - 
-		this.body_size) / 2, (gs.c.canvasPixHeight - 
+	ctx.drawImage(gc.playerImg, (gc.canvasPixWidth - 
+		this.body_size) / 2, (gc.canvasPixHeight - 
 		this.body_size) / 2);
 }

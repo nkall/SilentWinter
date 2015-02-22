@@ -4,33 +4,25 @@
  */
 
 // Main GameState object (see gamestate.js)
+var gs = null;
 // Arguments are the dimensions of the canvas
-var gs = new GameState(1024, 512);
+var gc = new GameConstants(1024, 512);
 
 function initialize(){
 	addKeyboardEvents();
-	gs.genGameMap();
 }
 
-function update(){
-	gs.updateFrame();
-	gs.player.updatePos();
-}
-
-function draw(ctx){
-	gs.drawFrame(ctx);
-	gs.player.drawPlayer(ctx);
-}
 
 // Main game loop
 function runGameLoop(ctx){
-	update();
-	draw(ctx);
+	gs.update();
+	gs.draw(ctx);
 }
 
 // Initialize everything, then run the game
 function runGame(){
 	var ctx = $("#canvas")[0].getContext("2d");
+	gs = new GameState(1024, 512);
 	initialize();
 	window.setInterval(function(){
 		runGameLoop(ctx);
@@ -38,7 +30,7 @@ function runGame(){
 }
 
 $(window).load(function(){
-	gs.c.loadAllImages(runGame);
+	gc.loadAllImages(runGame);
 });
 
 // Respond to user keyboard input

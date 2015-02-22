@@ -18,21 +18,21 @@ function Tile(imgIndex, hasObstacle){
 // Adds an obstacle to the current tile (or possibly a building)
 Tile.prototype.addObstacle = function (){
 	// Small chance of being a building
-	if ((Math.floor(Math.random() * gs.c.buildingSpawnOdds)) === 0){
+	if ((Math.floor(Math.random() * gc.buildingSpawnOdds)) === 0){
 		var buildImgIndex = Math.floor(Math.random() * 
- 						gs.c.buildingImgs.length);
+ 						gc.buildingImgs.length);
  		this.obstacle = new Obstacle(true, buildImgIndex);
  	} else { // Otherwise, run of the mill obstacle
  		var obsImgIndex = Math.floor(Math.random() * 
- 						gs.c.obstacleImgs.length);
+ 						gc.obstacleImgs.length);
  		this.obstacle = new Obstacle(false, obsImgIndex);
  	}
 }
 
 // Draws the tile, without any obstacle
 Tile.prototype.drawTile = function(x, y, xOffset, yOffset, ctx) {
-	ctx.drawImage(gs.c.tileImgs[this.imgIndex], 
-		(x * gs.c.tileSize) + xOffset, (y * gs.c.tileSize) + yOffset);
+	ctx.drawImage(gc.tileImgs[this.imgIndex], 
+		(x * gc.tileSize) + xOffset, (y * gc.tileSize) + yOffset);
 };
 
 function Obstacle(isBuilding, imgIndex){
@@ -42,10 +42,10 @@ function Obstacle(isBuilding, imgIndex){
 
 Obstacle.prototype.drawObstacle = function(x, y, xOffset, yOffset, ctx) {
 	if (this.isBuilding){
-		ctx.drawImage(gs.c.buildingImgs[this.imgIndex], 
-			(x * gs.c.tileSize) + xOffset, (y * gs.c.tileSize) + yOffset);
+		ctx.drawImage(gc.buildingImgs[this.imgIndex], 
+			(x * gc.tileSize) + xOffset, (y * gc.tileSize) + yOffset);
 	} else {
-		ctx.drawImage(gs.c.obstacleImgs[this.imgIndex], 
-			(x * gs.c.tileSize) + xOffset, (y * gs.c.tileSize) + yOffset);
+		ctx.drawImage(gc.obstacleImgs[this.imgIndex], 
+			(x * gc.tileSize) + xOffset, (y * gc.tileSize) + yOffset);
 	}
 }
