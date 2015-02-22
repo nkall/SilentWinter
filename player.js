@@ -18,19 +18,35 @@ function Player(x, y){
 	this.moveSpeed = 2;
 }
 
+// Returns false if the requested destination is obstructed
+Player.prototype.canMoveTo = function (nextPos){
+	var nextPosTile = gs.mainMap.getTile(nextPos.toTiles());
+	return (!nextPosTile.isObstructed);
+}
+
 // Moves the player based on keypresses
 Player.prototype.updatePos = function (mapPixWidth, mapPixHeight){
+	var nextPosition = new Coord(this.loc.x, this.loc.y);
 	// Update based on keypresses
-	if (this.isPressingUp){ this.loc.y -= this.moveSpeed;}
-	if (this.isPressingDown){ this.loc.y += this.moveSpeed; }
-	if (this.isPressingLeft){ this.loc.x -= this.moveSpeed; }
-	if (this.isPressingRight){ this.loc.x += this.moveSpeed; }
+	if (this.isPressingUp){
+		nextPosition.y -= this.moveSpeed;
+	}
+	if (this.isPressingDown){
+		nextPosition.y += this.moveSpeed;
+	}
+	if (this.isPressingLeft){
+		nextPosition.x -= this.moveSpeed;
+	}
+	if (this.isPressingRight){
+		nextPosition.x += this.moveSpeed;
+	}
 
-	// Reset position if walking off map
-	if (this.loc.x < 0){ this.loc.x += mapPixWidth; }
-	if (this.loc.x > gc.mapPixWidth){ this.loc.x -= mapPixWidth; }
-	if (this.loc.y < 0){ this.loc.y += mapPixHeight; }
-	if (this.loc.y > gc.mapPixHeight){ this.loc.y -= mapPixHeight; }
+	// Only move if the next position is not blocked
+	if (this.canMoveTo(nextPosition)){
+		this.loc = nextPosition;
+		// Reset position if walking off map
+		this.loc.wrapAroundLimits(new Coord(0,0), new Coord(mapPixWidth, mapPixHeight));
+	}
 }
 
 Player.prototype.drawPlayer = function (ctx){

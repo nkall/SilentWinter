@@ -40,11 +40,10 @@ function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
 	this.buildingImgs = [];
 	this.obstacleImgs = [];
 
-	// Odds of spawning an obstacle (1 in 'x')
-	this.obstacleSpawnOdds = 75;
-	// Odds of an obstacle being a building (1 in 'x')
-	this.buildingSpawnOdds = 20;
+	// Odds of a non-snow tile forming (1 in 'x')
 	this.altTileSpawnOdds = 20;
+	// Number of obstacle generation passes to be run for the main map
+	this.obstacleCount = 2000;
 }
 
 // Preloads all necessary images for the game

@@ -5,14 +5,12 @@ function Map(mapWidth, mapHeight){
 	this.mapPixSize = this.mapSize.toPixels();
 
 	// 2d Array of tiles representing the game map
-	this.map = this.genGameMap();
+	this.map = null;
+	this.genGameMap();
 }
 
-// This function initializes the entire game map in a random fashion. In the
-// future I plan to do things a bit smarter to generate lakes rather than
-// puddles, for example.
-Map.prototype.genGameMap = function() {
-	newMap = new Array();
+Map.prototype.genTerrain = function (){
+	var newMap = new Array();
  	for (var x = 0; x < this.mapSize.x; x++) {
  		newMap[x] = new Array();
  		for (var y = 0; y < this.mapSize.y; y++) {
@@ -21,17 +19,32 @@ Map.prototype.genGameMap = function() {
  				var tileImgIndex = Math.floor(Math.random() * 
  								  gc.tileImgs.length);
  			} else {
- 				var tileImgIndex = 1;
+ 				var tileImgIndex = 0;
  			}
- 			// Small chance of generating obstacle
- 			if ((Math.floor(Math.random() * gc.obstacleSpawnOdds)) === 5){
- 				newMap[x][y] = new Tile(tileImgIndex, true);
- 			} else { // Otherwise, empty tile
- 				newMap[x][y] = new Tile(tileImgIndex, false);
- 			}
+ 			newMap[x][y] = new Tile(gc.tileImgs[tileImgIndex], false);
  		}
  	}
- 	return newMap;
+ 	this.map = newMap;
+};
+
+Map.prototype.addObstacles = function (){
+	for (var i = 0; i < gc.obstacleCount; ++i){
+		// Generate random obstacle location
+		obstacleLoc = new Coord(Math.floor(Math.random() * this.mapSize.x),
+								Math.floor(Math.random() * this.mapSize.y));
+		// Generate random obstacle image
+		obstacleImgIndex = Math.floor(Math.random() * gc.obstacleImgs.length);
+		this.map[obstacleLoc.x][obstacleLoc.y] = new Tile 
+								(gc.obstacleImgs[obstacleImgIndex], true);
+	}
+};
+
+// This function initializes the entire game map in a random fashion. In the
+// future I plan to do things a bit smarter to generate lakes rather than
+// puddles, for example.
+Map.prototype.genGameMap = function() {
+	this.genTerrain();
+	this.addObstacles();
 };
 
 Map.prototype.getTile = function(loc){
@@ -81,10 +94,6 @@ Frame.prototype.drawFrame = function (ctx){
 			// Draw the tile at the given coordinates on screen
 			var currTile = gs.mainMap.getTile(loc);
 			currTile.drawTile((new Coord(x,y).toPixels()), this.pixOffset, ctx);
-			// Draw the obstacle if it has one
-			if (currTile.hasObstacle){
-				//currTile.obstacle.drawObstacle(x, y, this.pixOffset.x, this.pixOffset.y, ctx);
-			}
 		}
 	}
 };
