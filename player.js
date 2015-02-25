@@ -7,7 +7,7 @@ function Player(x, y){
 	this.loc = new Coord(x,y);
 
 	// Length/width of player's body, in pixels
-	this.body_size = 16;
+	this.body_size = 32;
 
 	// True if that directional key is currently being held down
 	this.isPressingUp = false;

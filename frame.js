@@ -7,16 +7,6 @@ function Frame(){
 	this.pixOffset = new Coord(0, 0);
 }
 
-// Returns an array of nearby obstacle coordinates (in tile form)
-Frame.prototype.getObstaclesInFrame = function(){
-	for (var x = 0; x < gc.canvasWidth; x++) {
-		for (var y = 0; y < gc.canvasHeight; y++) {
-			
-		}
-	}
-}
-
-
 // Updates the state of the frame (tiles displayed on canvas) based on player position
 Frame.prototype.updateFrame = function (playerX, playerY){
 	var firstTileLoc = new Coord(playerX - gc.canvasPixWidth / 2, 
@@ -36,6 +26,9 @@ Frame.prototype.drawFrame = function (ctx){
 
 			// Draw the tile at the given coordinates on screen
 			var currTile = gs.mainMap.getTile(loc);
+			if (x === 0 && currTile.isObstructed){
+				console.log(currTile);
+			}
 			currTile.drawTile((new Coord(x,y).toPixels()), this.pixOffset, ctx);
 		}
 	}

@@ -14,10 +14,9 @@ GameState.prototype.update = function (){
 	if (this.player.heat % 100 === 0){
 		console.log(this.player.heat);
 	}
-	if (this.player.heat >= 0){
-		this.player.heat--;
-		this.player.updatePos(this.mainMap.mapPixSize.x, this.mainMap.mapPixSize.y);
-	}
+	this.player.heat--;
+	this.player.updatePos(this.mainMap.mapPixSize.x, this.mainMap.mapPixSize.y);
+
 	this.frame.updateFrame(this.player.loc.x, this.player.loc.y);
 }
 
@@ -36,8 +35,8 @@ function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
 	this.canvasPixWidth = canvasPixWidth;
 	this.canvasPixHeight = canvasPixHeight;
 	// Tiles rendered on canvas at one time
-	this.canvasWidth = (canvasPixWidth / this.tileSize) + 2;
-	this.canvasHeight = (canvasPixHeight / this.tileSize) + 2;
+	this.canvasWidth = (canvasPixWidth / this.tileSize) + 1;
+	this.canvasHeight = (canvasPixHeight / this.tileSize) + 1;
 
 	// Images used in displaying various map elements/items/characters
 	// Remains uninitialized until loadAllImages() is called in main
@@ -56,12 +55,10 @@ function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
 GameConstants.prototype.loadAllImages = function (callbackFn) {
 	// These should be updated as image file names change
 	var playerImgName = 'player.png';
-	var tileImgNames = ['terrain0.png', 'terrain1.png', 'terrain2.png', 
-						'terrain3.png', 'terrain4.png'];
+	var tileImgNames = ['terrain0.png', 'terrain1.png', 'terrain2.png'];
 	var obstacleImgNames = ['obstacle0.png', 'obstacle1.png', 'obstacle2.png',
 							'obstacle3.png'];
-	var buildingImgNames = ['build0.png', 'build1.png', 'build2.png', 
-							'build3.png', 'build4.png']
+	var buildingImgNames = ['building0.png', 'building1.png', 'building2.png'];
 
 	// Keep count of loaded images to make sure each is loaded before being
 	// displayed. Otherwise, this would be callback hell, since image loading

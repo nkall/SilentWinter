@@ -6,7 +6,7 @@
 // Main GameState object (see gamestate.js)
 var gs = null;
 // Arguments are the tile size and dimensions of the canvas
-var gc = new GameConstants(32, 1024, 512);
+var gc = new GameConstants(128, 1024, 512);
 
 function initialize(){
 	addKeyboardEvents();
@@ -22,7 +22,7 @@ function runGameLoop(ctx){
 // Initialize everything, then run the game
 function runGame(){
 	var ctx = $("#canvas")[0].getContext("2d");
-	gs = new GameState(1024, 512);
+	gs = new GameState(gc.canvasPixWidth, gc.canvasPixHeight);
 	initialize();
 	window.setInterval(function(){
 		runGameLoop(ctx);
