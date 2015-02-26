@@ -1,8 +1,9 @@
-function Map(mapWidth, mapHeight){
+function Map(mapWidth, mapHeight, defaultTile){
 	// Size of the map in tiles
 	this.mapSize = new Coord(mapWidth, mapHeight);
 	// Likewise, in pixels
 	this.mapPixSize = this.mapSize.toPixels();
+	this.defaultTile = defaultTile;
 
 	// 2d Array of tiles representing the game map
 	this.map = null;
@@ -18,10 +19,11 @@ Map.prototype.genTerrain = function (){
  			if (Math.floor(Math.random() * gc.altTileSpawnOdds) === 0){
  				var tileImgIndex = Math.floor(Math.random() * 
  								  gc.tileImgs.length);
+ 				var tileImg = gc.tileImgs[tileImgIndex];
  			} else {
- 				var tileImgIndex = 0;
+ 				var tileImg = this.defaultTile;
  			}
- 			newMap[x][y] = new Tile(gc.tileImgs[tileImgIndex], false);
+ 			newMap[x][y] = new Tile(tileImg, false);
  		}
  	}
  	this.map = newMap;
@@ -30,13 +32,57 @@ Map.prototype.genTerrain = function (){
 Map.prototype.addObstacles = function (){
 	for (var i = 0; i < gc.obstacleCount; ++i){
 		// Generate random obstacle location
-		obstacleLoc = new Coord(Math.floor(Math.random() * this.mapSize.x),
+		var obstacleLoc = new Coord(Math.floor(Math.random() * this.mapSize.x),
 								Math.floor(Math.random() * this.mapSize.y));
 		// Generate random obstacle image
-		obstacleImgIndex = Math.floor(Math.random() * gc.obstacleImgs.length);
-		this.map[obstacleLoc.x][obstacleLoc.y] = new Tile 
-								(gc.obstacleImgs[obstacleImgIndex], true);
+		var obstacleImgIndex = Math.floor(Math.random() * gc.obstacleImgs.length);
+		// Create obstacle if not overlapping anything else
+		this.addObstacle(obstacleLoc, gc.obstacleImgs[obstacleImgIndex]);
 	}
+};
+
+Map.prototype.addBuildings = function (){
+	for (var i = 0; i < gc.buildingCount; ++i){
+		// Generate random obstacle location
+		var buildingLoc = new Coord(Math.floor(Math.random() * this.mapSize.x),
+								Math.floor(Math.random() * this.mapSize.y));
+		// Generate random obstacle image
+		var buildingImgIndex = Math.floor(Math.random() * gc.buildingImgs.length);
+		this.addObstacle(buildingLoc, gc.buildingImgs[buildingImgIndex]);
+	}
+};
+
+Map.prototype.isOverlapping = function(obstacleLoc){
+	if (true){
+		this.getTile(obstacleLoc).pic = null;
+	}
+};
+
+Map.prototype.addObstacle = function (obstacleLoc, obstacleImg){
+	this.map[obstacleLoc.x][obstacleLoc.y].obstaclePic = obstacleImg;
+	
+	// Obstacles take up four tiles, all with no image
+	var obstructedTiles = new Array();
+	obstructedTiles.push(new Coord(obstacleLoc.x, obstacleLoc.y))
+	obstructedTiles.push(new Coord(obstacleLoc.x + 1, obstacleLoc.y));
+	obstructedTiles.push(new Coord(obstacleLoc.x, obstacleLoc.y + 1));
+	obstructedTiles.push(new Coord(obstacleLoc.x + 1, obstacleLoc.y + 1));
+
+	for (var i = 0; i < obstructedTiles.length; ++i){
+		// Make sure this also works when obstacle is at map edge
+		obstructedTiles[i].wrapAroundLimits(new Coord(0,0), 
+					new Coord(this.mapSize.x, this.mapSize.y));
+		// Make tiles obstructing, and null
+		this.map[obstructedTiles[i].x][obstructedTiles[i].y].isObstructed = true;
+	}
+};
+
+Map.prototype.setTile = function (loc, tile){
+	this.map[loc.x][loc.y] = tile;
+};
+
+Map.prototype.getTile = function (loc){
+	return this.map[loc.x][loc.y];
 };
 
 // This function initializes the entire game map in a random fashion. In the
@@ -45,6 +91,7 @@ Map.prototype.addObstacles = function (){
 Map.prototype.genGameMap = function() {
 	this.genTerrain();
 	this.addObstacles();
+	this.addBuildings();
 };
 
 Map.prototype.getTile = function(loc){

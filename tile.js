@@ -6,14 +6,21 @@
 function Tile(pic, isObstructed){
 	// Index of the tile image in GameConstant's tileImgs array
 	this.pic = pic;
-
 	this.isObstructed = isObstructed;
+	this.obstaclePic = null;
 }
 
 Tile.prototype.drawTile = function(pixLoc, offset, ctx) {
-	ctx.drawImage(this.pic, pixLoc.x + offset.x, pixLoc.y + offset.y);
+	if (this.pic !== null){
+		ctx.drawImage(this.pic, pixLoc.x + offset.x, pixLoc.y + offset.y);
+	}
 };
 
+Tile.prototype.drawObstacle = function (pixLoc, offset, ctx) {
+	if (this.obstaclePic !== null){
+		ctx.drawImage(this.obstaclePic, pixLoc.x + offset.x, pixLoc.y + offset.y);
+	}
+};
 
 
 

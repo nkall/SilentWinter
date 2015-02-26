@@ -4,7 +4,7 @@
  */
 
 function GameState(canvasWidth, canvasHeight){
-	this.mainMap = new Map(500, 500);
+	this.mainMap = new Map(501, 501, gc.tileImgs[0]);
 	// The player character -- see player.js for more information
 	this.player = new Player(this.mainMap.mapPixSize.x / 2, this.mainMap.mapPixSize.y / 2);
 	this.frame = new Frame();
@@ -48,7 +48,8 @@ function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
 	// Odds of a non-snow tile forming (1 in 'x')
 	this.altTileSpawnOdds = 20;
 	// Number of obstacle generation passes to be run for the main map
-	this.obstacleCount = 2000;
+	this.obstacleCount = 5000;
+	this.buildingCount = 2000;
 }
 
 // Preloads all necessary images for the game
@@ -56,8 +57,7 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 	// These should be updated as image file names change
 	var playerImgName = 'player.png';
 	var tileImgNames = ['terrain0.png', 'terrain1.png', 'terrain2.png'];
-	var obstacleImgNames = ['obstacle0.png', 'obstacle1.png', 'obstacle2.png',
-							'obstacle3.png'];
+	var obstacleImgNames = ['obstacle0.png', 'obstacle1.png', 'obstacle2.png'];
 	var buildingImgNames = ['building0.png', 'building1.png', 'building2.png'];
 
 	// Keep count of loaded images to make sure each is loaded before being

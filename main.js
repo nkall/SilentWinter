@@ -6,7 +6,7 @@
 // Main GameState object (see gamestate.js)
 var gs = null;
 // Arguments are the tile size and dimensions of the canvas
-var gc = new GameConstants(128, 1024, 512);
+var gc = new GameConstants(64, 1024, 512);
 
 function initialize(){
 	addKeyboardEvents();

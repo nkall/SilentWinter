@@ -15,9 +15,9 @@ Frame.prototype.updateFrame = function (playerX, playerY){
 	this.pixOffset.set(-(playerX % gc.tileSize), -(playerY % gc.tileSize));
 };
 
-Frame.prototype.drawFrame = function (ctx){
-	for (var x = 0; x < gc.canvasWidth; x++) {
-		for (var y = 0; y < gc.canvasHeight; y++) {
+Frame.prototype.drawTerrain = function(ctx){
+	for (var x = -1; x < gc.canvasWidth; x++) {
+		for (var y = -1; y < gc.canvasHeight; y++) {
 			var loc = new Coord(x + this.frameStart.x, y + this.frameStart.y);
 
 			// If map edge reached, loop the map
@@ -26,10 +26,28 @@ Frame.prototype.drawFrame = function (ctx){
 
 			// Draw the tile at the given coordinates on screen
 			var currTile = gs.mainMap.getTile(loc);
-			if (x === 0 && currTile.isObstructed){
-				console.log(currTile);
-			}
 			currTile.drawTile((new Coord(x,y).toPixels()), this.pixOffset, ctx);
 		}
+	}	
+};
+
+Frame.prototype.drawObstacles = function(ctx){
+	for (var x = -1; x < gc.canvasWidth; x++) {
+		for (var y = -1; y < gc.canvasHeight; y++) {
+			var loc = new Coord(x + this.frameStart.x, y + this.frameStart.y);
+
+			// If map edge reached, loop the map
+			loc.wrapAroundLimits(new Coord(0,0), new Coord(gs.mainMap.mapSize.x,
+														   gs.mainMap.mapSize.y));
+
+			// Draw the tile at the given coordinates on screen
+			var currTile = gs.mainMap.getTile(loc);
+			currTile.drawObstacle((new Coord(x,y).toPixels()), this.pixOffset, ctx);
+		}
 	}
+}
+
+Frame.prototype.drawFrame = function (ctx){
+	this.drawTerrain(ctx);
+	this.drawObstacles(ctx);
 };
