@@ -4,7 +4,7 @@
  */
 
 function GameState(canvasWidth, canvasHeight){
-	this.mainMap = new Map(501, 501, gc.tileImgs[0]);
+	this.mainMap = new Map(500, 500, gc.tileImgs[0]);
 	// The player character -- see player.js for more information
 	this.player = new Player(this.mainMap.mapPixSize.x / 2, this.mainMap.mapPixSize.y / 2);
 	this.frame = new Frame();
@@ -16,7 +16,6 @@ GameState.prototype.update = function (){
 	}
 	this.player.heat--;
 	this.player.updatePos(this.mainMap.mapPixSize.x, this.mainMap.mapPixSize.y);
-
 	this.frame.updateFrame(this.player.loc.x, this.player.loc.y);
 }
 
@@ -41,9 +40,10 @@ function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
 	// Images used in displaying various map elements/items/characters
 	// Remains uninitialized until loadAllImages() is called in main
 	this.playerImg = null;
-	this.tileImgs = [];
-	this.buildingImgs = [];
-	this.obstacleImgs = [];
+	this.tileImgs = new Array();
+	this.buildingImgs = new Array();
+	this.obstacleImgs = new Array();
+	this.heatImgs = new Array();
 
 	// Odds of a non-snow tile forming (1 in 'x')
 	this.altTileSpawnOdds = 20;
@@ -59,13 +59,14 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 	var tileImgNames = ['terrain0.png', 'terrain1.png', 'terrain2.png'];
 	var obstacleImgNames = ['obstacle0.png', 'obstacle1.png', 'obstacle2.png'];
 	var buildingImgNames = ['building0.png', 'building1.png', 'building2.png'];
+	var heatImgNames = ['heat0.png', 'heat1.png'];
 
 	// Keep count of loaded images to make sure each is loaded before being
 	// displayed. Otherwise, this would be callback hell, since image loading
 	// is asynchronous.
 	var loadCount = 0
 	var loadLimit = 1 + tileImgNames.length + obstacleImgNames.length +
-			buildingImgNames.length;
+			buildingImgNames.length + heatImgNames.length;
 
 	// Load player image
 	this.playerImg = new Image();
@@ -106,6 +107,18 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 		this.buildingImgs[i] = new Image();
 		this.buildingImgs[i].src = 'bin/' + buildingImgNames[i];
 		this.buildingImgs[i].onload = function (){
+			loadCount++;
+			if (loadCount === loadLimit){
+				callbackFn();
+			}
+		};
+	}
+
+	// Load heat bar
+		for (var i = 0; i < heatImgNames.length; i++){
+		this.heatImgs[i] = new Image();
+		this.heatImgs[i].src = 'bin/' + heatImgNames[i];
+		this.heatImgs[i].onload = function (){
 			loadCount++;
 			if (loadCount === loadLimit){
 				callbackFn();

@@ -19,7 +19,8 @@ function Player(x, y){
 	// Pixels moved per frame
 	this.moveSpeed = 2;
 
-	this.heat = 2000;
+	this.heat = 5000;
+	this.heatBar = new HeatBar(this.heat);
 }
 
 // Returns false if the requested destination is obstructed
@@ -51,9 +52,30 @@ Player.prototype.updatePos = function (mapPixWidth, mapPixHeight){
 	if (this.canMoveTo(nextPosition)){
 		this.loc = nextPosition;	
 	}
+	this.heatBar.updateHeatBar(this.heat);
 };
 
 Player.prototype.drawPlayer = function (ctx){
 	ctx.drawImage(gc.playerImg, (gc.canvasPixWidth - this.body_size) / 2, 
 		(gc.canvasPixHeight - this.body_size) / 2);
+	this.heatBar.drawHeatBar(ctx);
+};
+
+
+function HeatBar(maxHeat){
+	this.maxHeat = maxHeat;
+	this.barWidth = gc.heatImgs[0].width;
+	this.barHeight = gc.heatImgs[0].height;
+	this.barFillLevel = gc.heatImgs[0].width;
+}
+
+HeatBar.prototype.updateHeatBar = function(heat){
+	this.heat--;
+	this.barFillLevel = this.barWidth * (heat / this.maxHeat);
+	console.log(this.barFillLevel);
+};
+
+HeatBar.prototype.drawHeatBar = function(ctx){
+	ctx.drawImage(gc.heatImgs[0], 0, 0);
+	ctx.drawImage(gc.heatImgs[1], 0, 0, this.barFillLevel, this.barHeight, 0, 0, this.barFillLevel, this.barHeight);
 };

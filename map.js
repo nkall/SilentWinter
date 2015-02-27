@@ -52,15 +52,19 @@ Map.prototype.addBuildings = function (){
 	}
 };
 
-Map.prototype.isOverlapping = function(obstacleLoc){
-	if (true){
-		this.getTile(obstacleLoc).pic = null;
+Map.prototype.isOverlapping = function(obstructedTiles){
+	for (var i = 0; i < obstructedTiles.length; ++i){
+		// Make sure this also works when obstacle is at map edge
+		obstructedTiles[i].wrapAroundLimits(new Coord(0,0), 
+						new Coord(this.mapSize.x, this.mapSize.y));
+		if (this.getTile(obstructedTiles[i]).isObstructed){
+			return true;
+		}
 	}
+	return false;
 };
 
 Map.prototype.addObstacle = function (obstacleLoc, obstacleImg){
-	this.map[obstacleLoc.x][obstacleLoc.y].obstaclePic = obstacleImg;
-	
 	// Obstacles take up four tiles, all with no image
 	var obstructedTiles = new Array();
 	obstructedTiles.push(new Coord(obstacleLoc.x, obstacleLoc.y))
@@ -68,12 +72,15 @@ Map.prototype.addObstacle = function (obstacleLoc, obstacleImg){
 	obstructedTiles.push(new Coord(obstacleLoc.x, obstacleLoc.y + 1));
 	obstructedTiles.push(new Coord(obstacleLoc.x + 1, obstacleLoc.y + 1));
 
-	for (var i = 0; i < obstructedTiles.length; ++i){
-		// Make sure this also works when obstacle is at map edge
-		obstructedTiles[i].wrapAroundLimits(new Coord(0,0), 
-					new Coord(this.mapSize.x, this.mapSize.y));
-		// Make tiles obstructing, and null
-		this.map[obstructedTiles[i].x][obstructedTiles[i].y].isObstructed = true;
+	if (!this.isOverlapping(obstructedTiles)){
+		this.map[obstacleLoc.x][obstacleLoc.y].obstaclePic = obstacleImg;
+		for (var i = 0; i < obstructedTiles.length; ++i){
+			// Make sure this also works when obstacle is at map edge
+			obstructedTiles[i].wrapAroundLimits(new Coord(0,0), 
+						new Coord(this.mapSize.x, this.mapSize.y));
+			// Make tiles obstructing, and null
+			this.map[obstructedTiles[i].x][obstructedTiles[i].y].isObstructed = true;
+		}
 	}
 };
 
@@ -85,6 +92,7 @@ Map.prototype.getTile = function (loc){
 	return this.map[loc.x][loc.y];
 };
 
+
 // This function initializes the entire game map in a random fashion. In the
 // future I plan to do things a bit smarter to generate lakes rather than
 // puddles, for example.
@@ -93,7 +101,3 @@ Map.prototype.genGameMap = function() {
 	this.addObstacles();
 	this.addBuildings();
 };
-
-Map.prototype.getTile = function(loc){
-	return this.map[loc.x][loc.y];
-}
