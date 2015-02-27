@@ -18,7 +18,7 @@ Item.prototype.genRandomItem = function() {
 
 Item.prototype.drawItem = function(pixLoc, offset, ctx) {
 	if (this.pic !== null){
-		ctx.drawImage(this.pic, pixLoc.x + offset.x, pixLoc.y + offset.y);
+		ctx.drawImage(this.pic, pixLoc.x + offset.x, pixLoc.y + offset.y, gc.tileSize, gc.tileSize);
 	}
 };
 

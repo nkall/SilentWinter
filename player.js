@@ -21,19 +21,31 @@ function Player(x, y){
 
 	this.heat = 5000;
 	this.heatBar = new HeatBar(this.heat);
-}
 
-// Returns false if the requested destination is obstructed
-Player.prototype.canMoveTo = function (nextPos){
-	var nextPosTile = gs.mainMap.getTile(nextPos.toTiles());
-	return (!nextPosTile.isObstructed);
-};
+	this.inventory = new Inventory(0,0,0,0,0);
+}
 
 Player.prototype.update = function (map){
 	this.updatePos(map);
+	this.updateStatus(map);
+}
+
+Player.prototype.updateStatus = function(map) {
+	// Update heat readings
 	this.heat--;
 	this.heatBar.updateHeatBar(this.heat);
-}
+	if (this.heat < 0){this.heat = 0;}
+
+	var currentTileLoc = this.loc.toTiles();
+	if (map.isNearObstacle(currentTileLoc, true)){
+		console.log('yes');
+	}
+	var item = map.getItem(currentTileLoc);
+	if (item !== undefined){
+		this.inventory.collectItem(item);
+		map.removeItem(currentTileLoc);
+	}
+};
 
 // Moves the player based on keypresses
 Player.prototype.updatePos = function (map){
@@ -56,12 +68,15 @@ Player.prototype.updatePos = function (map){
 	nextPosition.wrapAroundLimits(new Coord(0,0), new Coord(map.mapPixSize.x, 
 															map.mapPixSize.y));
 	// Only move if the next position is not blocked
-	if (this.canMoveTo(nextPosition)){
+	if (this.canMoveTo(nextPosition, map)){
 		this.loc = nextPosition;	
 	}
-	if (map.isNearObstacle(this.loc.toTiles(), true)){
-		console.log('yes');
-	}
+};
+
+// Returns false if the requested destination is obstructed
+Player.prototype.canMoveTo = function (nextPos, map){
+	var nextPosTile = map.getTile(nextPos.toTiles());
+	return (!nextPosTile.isObstructed);
 };
 
 Player.prototype.drawPlayer = function (ctx){

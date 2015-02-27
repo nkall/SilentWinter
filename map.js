@@ -66,7 +66,7 @@ Map.prototype.addBuildings = function (){
 		var buildingLoc = new Coord(Math.floor(Math.random() * this.mapSize.x),
 								Math.floor(Math.random() * this.mapSize.y));
 		// Generate random obstacle image
-		var buildingImgIndex = Math.floor(Math.random() * gc.buildingImgs.length);
+		var buildingImgIndex = Math.floor(Math.random() * gc.buildingImgs.length - 1) + 1;
 		this.addObstacle(buildingLoc, gc.buildingImgs[buildingImgIndex], true);
 	}
 };
@@ -147,8 +147,17 @@ Map.prototype.addObstacle = function (obstacleLoc, obstacleImg, isEnterable){
 	}
 };
 
-Map.prototype.setTile = function (loc, tile){
-	this.map[loc.x][loc.y] = tile;
+Map.prototype.getItem = function (loc){
+	if (this.items[loc.x] !== undefined){
+		return this.items[loc.x][loc.y];
+	}
+	return undefined;
+};
+
+Map.prototype.removeItem = function (loc){
+	if (this.items[loc.x] !== undefined){
+		this.items[loc.x][loc.y] = undefined;
+	}
 };
 
 Map.prototype.getTile = function (loc){

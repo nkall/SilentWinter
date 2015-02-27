@@ -15,12 +15,12 @@ function GameState(canvasWidth, canvasHeight){
 GameState.prototype.update = function (){
 	this.player.update(this.mainMap);
 	this.frame.updateFrame(this.player.loc.x, this.player.loc.y);
-}
+};
 
 GameState.prototype.draw = function (ctx){
 	gs.frame.drawFrame(ctx, this.mainMap);
 	gs.player.drawPlayer(ctx);
-}
+};
 
 
 // This function contains values not likely to change during the game,

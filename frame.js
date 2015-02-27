@@ -43,7 +43,8 @@ Frame.prototype.drawObstacles = function(ctx, map){
 			currTile.drawObstacle((new Coord(x,y).toPixels()), this.pixOffset, ctx);
 
 			// Draw items, if applicable
-			if (map.items[loc.x] !== undefined && map.items[loc.x][loc.y] !== undefined){
+			var item = map.getItem(loc);
+			if (item !== undefined){
 				map.items[loc.x][loc.y].drawItem((new Coord(x,y).toPixels()), this.pixOffset, ctx);
 			}
 		}
