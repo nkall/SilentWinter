@@ -17,8 +17,8 @@ function initialize(){
 
 // Main game loop
 function runGameLoop(ctx){
-	gs.update();
-	gs.draw(ctx);
+	wm.update();
+	wm.draw(ctx);
 	//console.log(gs.player.loc);
 }
 
@@ -62,6 +62,10 @@ function addKeyboardEvents(){
 			case 39:
 				gs.player.isPressingRight = true;
 				break;
+			case 69:
+				if (wm.gameMode === "Scavenge"){
+					gs.enterBuilding();
+				}
 			default:
 				break;
 		}

@@ -5,7 +5,7 @@ function Map(mapWidth, mapHeight, defaultTile){
 	this.mapPixSize = this.mapSize.toPixels();
 	this.defaultTile = defaultTile;
 
-	// 2d Array of tiles representing the game map
+	// 2d Array of tiles representing the inner map of a building
 	this.map = null;
 
 	// 2d Array with gaps showing location of items on map
@@ -97,6 +97,7 @@ Map.prototype.isOverlapping = function(obstructedTiles){
 	}
 };
 
+
 // Returns true if one of the tiles surrounding the argument tile is a building,
 // or if it is an obstacle in general, if needsToBeEnterable is false
 Map.prototype.isNearObstacle = function (loc, needsToBeEnterable){
@@ -126,6 +127,44 @@ Map.prototype.isNearObstacle = function (loc, needsToBeEnterable){
 	return false;
 };
 
+Map.prototype.genInteriorMap = function (loc){
+	// Make sure the map is the same for all tiles comprising the building
+	var possibleBuildTiles = [new Coord(loc.x-1, loc.y-1)
+						   , new Coord(loc.x-1, loc.y)
+						   , new Coord(loc.x-1, loc.y+1)
+						   , new Coord(loc.x, loc.y-1)
+						   , new Coord(loc.x, loc.y+1)
+						   , new Coord(loc.x+1, loc.y-1)
+						   , new Coord(loc.x+1, loc.y)
+						   , new Coord(loc.x+1, loc.y+1)
+						   ];
+
+}
+
+// If there is a building nearby, this returns the location of
+// the nearby tile of the building.  Otherwise, it returns null
+Map.prototype.getNearbyBuildingLocation = function (loc){
+	var surroundingTiles = [loc
+						   , new Coord(loc.x-1, loc.y-1)
+						   , new Coord(loc.x-1, loc.y)
+						   , new Coord(loc.x-1, loc.y+1)
+						   , new Coord(loc.x, loc.y-1)
+						   , new Coord(loc.x, loc.y+1)
+						   , new Coord(loc.x+1, loc.y-1)
+						   , new Coord(loc.x+1, loc.y)
+						   , new Coord(loc.x+1, loc.y+1)
+						   ];
+	for (var i = 0; i < surroundingTiles.length; i++) {
+		surroundingTiles[i].wrapAroundLimits();
+		var currTile = this.getTile(surroundingTiles[i]);
+		if (currTile.isObstructed && currTile.isEnterable){
+			return currTile;
+		}
+	}
+	return null;
+};
+
+// Adds a new obstacle to the map if certain conditions are met
 Map.prototype.addObstacle = function (obstacleLoc, obstacleImg, isEnterable){
 	// Obstacles take up four tiles, all with no image
 	var obstructedTiles = new Array();
@@ -134,7 +173,11 @@ Map.prototype.addObstacle = function (obstacleLoc, obstacleImg, isEnterable){
 	obstructedTiles.push(new Coord(obstacleLoc.x, obstacleLoc.y + 1));
 	obstructedTiles.push(new Coord(obstacleLoc.x + 1, obstacleLoc.y + 1));
 
-	if (!this.isOverlapping(obstructedTiles)){
+	// Obstacles can't be overlapping or horizontally bordering a building
+	if (!this.isOverlapping(obstructedTiles) && !this.isNearObstacle(obstacleLoc, true) && 
+		!this.isNearObstacle(obstructedTiles[1], true) && 
+		!this.isNearObstacle(obstructedTiles[2], true) && 
+		!this.isNearObstacle(obstructedTiles[3], true)){
 		this.map[obstacleLoc.x][obstacleLoc.y].obstaclePic = obstacleImg;
 		for (var i = 0; i < obstructedTiles.length; ++i){
 			// Make sure this also works when obstacle is at map edge

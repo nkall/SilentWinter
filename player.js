@@ -37,8 +37,8 @@ Player.prototype.update = function (){
 Player.prototype.updateStatus = function() {
 	// Update heat readings
 	this.heat--;
-	this.heatBar.updateHeatBar(this.heat);
 	if (this.heat < 0){this.heat = 0;}
+	this.heatBar.updateHeatBar(this.heat);
 
 	this.currentTileLoc = this.loc.toTiles();
 
@@ -94,7 +94,6 @@ Player.prototype.drawPlayer = function (ctx){
 		wm.displayMessage(ctx, 'Press E to enter building');
 	}
 	if (this.turnsSinceItemCollected < 50){
-		console.log(this.lastItemCollected);
 		var itemMessage = (this.lastItemCollected.quantity.toString() + ' ' +
 						gc.itemFullNames[this.lastItemCollected.itemType] + ' Collected');
 		wm.displayMessage(ctx, itemMessage);
