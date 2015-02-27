@@ -62,9 +62,18 @@ function addKeyboardEvents(){
 			case 39:
 				gs.player.isPressingRight = true;
 				break;
+			// E
 			case 69:
 				if (wm.gameMode === "Scavenge"){
 					gs.enterBuilding();
+				}
+				break;
+			// I
+			case 73:
+				if (wm.gameMode === "Scavenge"){
+					wm.gameMode = "Inventory";
+				} else if (wm.gameMode === "Inventory"){
+					wm.gameMode = "Scavenge";
 				}
 			default:
 				break;

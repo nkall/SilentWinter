@@ -16,10 +16,10 @@ function GameState(canvasWidth, canvasHeight){
 }
 
 GameState.prototype.enterBuilding = function() {
-	if (this.currMap.getNearbyBuildingLocation(this.player.loc.toTiles()) !== false){
-		return 0;
+	var buildingLoc = this.currMap.getNearbyBuildingLocation(this.player.loc.toTiles());
+	if (buildingLoc !== null){
+		
 	};
-	return 0;
 };
 
 

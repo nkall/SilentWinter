@@ -25,7 +25,7 @@ Item.prototype.drawItem = function(pixLoc, offset, ctx) {
 function Inventory(food, fuel, elec, scrap, parts){
 	this.food = food;
 	this.fuel = fuel;
-	this.electronics = elec;
+	this.elec = elec;
 	this.scrap = scrap;
 	this.parts = parts;
 }

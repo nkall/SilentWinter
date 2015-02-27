@@ -71,7 +71,6 @@ Map.prototype.addBuildings = function (){
 	}
 };
 
-var ct = 0;
 Map.prototype.isOverlapping = function(obstructedTiles){
 	// Check if overlapping other obstructions
 	for (var i = 0; i < obstructedTiles.length; ++i){
