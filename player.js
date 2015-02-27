@@ -4,7 +4,7 @@
 
 function Player(x, y){
 	// X and Y here are actual pixel coordinates, not tiles
-	this.loc = new Coord(0,0);
+	this.loc = new Coord(x,y);
 
 	// Length/width of player's body, in pixels
 	this.body_size = 32;

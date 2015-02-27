@@ -71,6 +71,7 @@ Map.prototype.addBuildings = function (){
 	}
 };
 
+var ct = 0;
 Map.prototype.isOverlapping = function(obstructedTiles){
 	// Check if overlapping other obstructions
 	for (var i = 0; i < obstructedTiles.length; ++i){
@@ -80,13 +81,20 @@ Map.prototype.isOverlapping = function(obstructedTiles){
 		if (this.getTile(obstructedTiles[i]).isObstructed){
 			return true;
 		}
+		
+		// Check if overlapping player start positions
+		var playerStartLocs = [new Coord(this.mapSize.x / 2, this.mapSize.y / 2)
+							   , new Coord(this.mapSize.x / 2-1, this.mapSize.y / 2)
+							   , new Coord(this.mapSize.x / 2, this.mapSize.y / 2-1)
+							   , new Coord(this.mapSize.x / 2-1, this.mapSize.y / 2-1)
+							   ];
+		for (var j = 0; j < playerStartLocs.length; j++) {
+			if (obstructedTiles[i].x === playerStartLocs[j].x &&
+				obstructedTiles[i].y === playerStartLocs[j].y){
+				return true;
+			}
+		};
 	}
-	// Check if overlapping player start position
-	var playerStartLoc = new Coord(gc.mainMapWidth / 2, gc.mainMapHeight / 2);
-	if (this.isNearObstacle(playerStartLoc, false)){
-		return true;
-	}
-	return false;
 };
 
 // Returns true if one of the tiles surrounding the argument tile is a building,
@@ -148,11 +156,14 @@ Map.prototype.getTile = function (loc){
 };
 
 
-// This function initializes the entire game map in a random fashion. In the
-// future I plan to do things a bit smarter to generate lakes rather than
-// puddles, for example.
+// This function initializes the main game map in a random fashion
 Map.prototype.genGameMap = function() {
+	// Generate snowy ground
 	this.genTerrain();
+	// Add home base
+	var homeBaseLoc = new Coord(this.mapSize.x / 2 - 1, this.mapSize.y / 2 - 3);
+	this.addObstacle(homeBaseLoc, gc.buildingImgs[0], true);
+
 	this.addObstacles();
 	this.addBuildings();
 	this.addItems();

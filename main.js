@@ -17,6 +17,7 @@ function initialize(){
 function runGameLoop(ctx){
 	gs.update();
 	gs.draw(ctx);
+	//console.log(gs.player.loc);
 }
 
 // Initialize everything, then run the game
