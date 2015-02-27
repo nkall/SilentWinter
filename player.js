@@ -38,8 +38,13 @@ Player.prototype.update = function (){
 
 Player.prototype.updateStatus = function() {
 	// Update heat readings
-	this.heat--;
-	if (this.heat < 1){this.heat = 1;}
+	if (gs.currMap === gs.mainMap){
+		this.heat--;
+	}
+	// Restart game if the heat runs out.  Eventually, this will be changed.
+	if (this.heat < 1){
+		gs = new GameState(gc.canvasPixWidth, gc.canvasPixHeight);
+	}
 	this.heatBar.updateHeatBar(this.heat);
 
 	this.currentTileLoc = this.loc.toTiles();
