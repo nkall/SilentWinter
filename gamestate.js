@@ -18,8 +18,19 @@ function GameState(canvasWidth, canvasHeight){
 GameState.prototype.enterBuilding = function() {
 	var buildingLoc = this.currMap.getNearbyBuildingLocation(this.player.loc.toTiles());
 	if (buildingLoc !== null){
-		this.currMap = this.currMap.createInteriorMap(buildingLoc);
-		this.player.loc = new Coord(this.currMap.mapPixSize.x / 2, this.currMap.mapPixSize.y / 2);
+		if (this.currMap === this.mainMap){
+			this.player.mainLoc = this.player.loc;
+			var innerMap = this.currMap.getTile(buildingLoc).innerMap;
+			if (innerMap === null){
+				this.currMap = this.currMap.createInteriorMap(buildingLoc);
+			} else {
+				this.currMap = innerMap;
+			}
+			this.player.loc = new Coord(this.currMap.mapPixSize.x / 2, this.currMap.mapPixSize.y / 2);
+		} else {
+			this.player.loc = this.player.mainLoc;
+			this.currMap = this.mainMap;
+		}
 	};
 };
 

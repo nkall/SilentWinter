@@ -153,7 +153,6 @@ Map.prototype.createInteriorMap = function (loc){
 	for (var i = 0; i < buildTiles.length; i++) {
 		this.map[buildTiles[i].x][buildTiles[i].y].innerMap = interiorMap;
 	}
-	console.log(this.map[buildTiles[0].x][buildTiles[0].y]);
 	return interiorMap;
 };
 
@@ -240,7 +239,7 @@ Map.prototype.genGameMap = function() {
 	this.addItems();
 };
 
-// Hardcoded for now, but will have different forms in the future
+// Hardcoded for now, but will have different building designs in the future
 Map.prototype.genInteriorMap = function() {
 	var newMap = new Map(gc.interiorMapSize, gc.interiorMapSize, gc.tileImgs[0]);
 	for (var x = 0; x < newMap.mapSize.x; x++) {
@@ -259,6 +258,9 @@ Map.prototype.genInteriorMap = function() {
  					, new Coord(mapCent.x, mapCent.y-2)
  					, new Coord(mapCent.x-1, mapCent.y-3)
  					, new Coord(mapCent.x, mapCent.y-3)
+ 					, new Coord(mapCent.x, mapCent.y-4)
+ 					, new Coord(mapCent.x-1, mapCent.y+1)
+ 					, new Coord(mapCent.x, mapCent.y+1)
  					];
  	for (var i = 0; i < floorTiles.length; i++) {
  		newMap.map[floorTiles[i].x][floorTiles[i].y].pic = gc.interiorFloorImgs[0];
@@ -269,20 +271,27 @@ Map.prototype.genInteriorMap = function() {
  					, new Coord(mapCent.x-2, mapCent.y-3)
  					, new Coord(mapCent.x-2, mapCent.y-4)
  					, new Coord(mapCent.x-2, mapCent.y+1)
+ 					, new Coord(mapCent.x-2, mapCent.y+2)
  					, new Coord(mapCent.x+1, mapCent.y)
  					, new Coord(mapCent.x+1, mapCent.y-1)
  					, new Coord(mapCent.x+1, mapCent.y-2)
  					, new Coord(mapCent.x+1, mapCent.y-3)
  					, new Coord(mapCent.x+1, mapCent.y-4)
  					, new Coord(mapCent.x+1, mapCent.y+1)
+ 					, new Coord(mapCent.x+1, mapCent.y+2)
  					, new Coord(mapCent.x-1, mapCent.y-4)
  					, new Coord(mapCent.x, mapCent.y-4)
- 					, new Coord(mapCent.x, mapCent.y+1)
+ 					, new Coord(mapCent.x, mapCent.y+2)
  					];
  	for (var i = 0; i < wallTiles.length; i++) {
  		newMap.map[wallTiles[i].x][wallTiles[i].y].pic = gc.interiorWallImgs[0];
  		newMap.map[wallTiles[i].x][wallTiles[i].y].isObstructed = true;
  	};
+
+ 	var exit = new Coord(mapCent.x-1, mapCent.y+2);
+ 	newMap.map[exit.x][exit.y].pic = gc.interiorFloorImgs[0];
+ 	newMap.map[exit.x][exit.y].isObstructed = true;
+ 	newMap.map[exit.x][exit.y].isEnterable = true;
 
  	newMap.addItem(new Coord(mapCent.x, mapCent.y-3));
 

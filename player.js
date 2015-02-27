@@ -39,7 +39,7 @@ Player.prototype.update = function (){
 Player.prototype.updateStatus = function() {
 	// Update heat readings
 	this.heat--;
-	if (this.heat < 0){this.heat = 0;}
+	if (this.heat < 1){this.heat = 1;}
 	this.heatBar.updateHeatBar(this.heat);
 
 	this.currentTileLoc = this.loc.toTiles();
@@ -97,7 +97,11 @@ Player.prototype.drawPlayer = function (ctx){
 
 	if (gs.currMap.isNearObstacle(this.currentTileLoc, true)){
 		this.turnsSinceItemCollected = 50;
-		wm.displayMessage(ctx, 'Press E to enter building');
+		var movingDirection = 'enter';
+		if (gs.currMap !== gs.mainMap){
+			movingDirection = 'exit';
+		}
+		wm.displayMessage(ctx, 'Press E to ' + movingDirection + ' building');
 	}
 	if (this.turnsSinceItemCollected < 50){
 		var itemMessage = (this.lastItemCollected.quantity.toString() + ' ' +
