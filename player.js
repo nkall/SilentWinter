@@ -5,6 +5,7 @@
 function Player(x, y){
 	// X and Y here are actual pixel coordinates, not tiles
 	this.loc = new Coord(x,y);
+	this.currentTileLoc = this.loc.toTiles();
 
 	// Length/width of player's body, in pixels
 	this.body_size = 32;
@@ -25,30 +26,27 @@ function Player(x, y){
 	this.inventory = new Inventory(0,0,0,0,0);
 }
 
-Player.prototype.update = function (map){
-	this.updatePos(map);
-	this.updateStatus(map);
+Player.prototype.update = function (){
+	this.updatePos();
+	this.updateStatus();
 }
 
-Player.prototype.updateStatus = function(map) {
+Player.prototype.updateStatus = function() {
 	// Update heat readings
 	this.heat--;
 	this.heatBar.updateHeatBar(this.heat);
 	if (this.heat < 0){this.heat = 0;}
 
-	var currentTileLoc = this.loc.toTiles();
-	if (map.isNearObstacle(currentTileLoc, true)){
-		console.log('yes');
-	}
-	var item = map.getItem(currentTileLoc);
+	this.currentTileLoc = this.loc.toTiles();
+	var item = gs.currMap.getItem(this.currentTileLoc);
 	if (item !== undefined){
 		this.inventory.collectItem(item);
-		map.removeItem(currentTileLoc);
+		gs.currMap.removeItem(this.currentTileLoc);
 	}
 };
 
 // Moves the player based on keypresses
-Player.prototype.updatePos = function (map){
+Player.prototype.updatePos = function (){
 	var nextPosition = new Coord(this.loc.x, this.loc.y);
 	// Update based on keypresses
 	if (this.isPressingUp){
@@ -65,17 +63,17 @@ Player.prototype.updatePos = function (map){
 	}
 
 	// Reset position if walking off map
-	nextPosition.wrapAroundLimits(new Coord(0,0), new Coord(map.mapPixSize.x, 
-															map.mapPixSize.y));
+	nextPosition.wrapAroundLimits(new Coord(0,0), new Coord(gs.currMap.mapPixSize.x, 
+															gs.currMap.mapPixSize.y));
 	// Only move if the next position is not blocked
-	if (this.canMoveTo(nextPosition, map)){
+	if (this.canMoveTo(nextPosition, gs.currMap)){
 		this.loc = nextPosition;	
 	}
 };
 
 // Returns false if the requested destination is obstructed
-Player.prototype.canMoveTo = function (nextPos, map){
-	var nextPosTile = map.getTile(nextPos.toTiles());
+Player.prototype.canMoveTo = function (nextPos){
+	var nextPosTile = gs.currMap.getTile(nextPos.toTiles());
 	return (!nextPosTile.isObstructed);
 };
 
@@ -83,6 +81,10 @@ Player.prototype.drawPlayer = function (ctx){
 	ctx.drawImage(gc.playerImg, (gc.canvasPixWidth - this.body_size) / 2, 
 		(gc.canvasPixHeight - this.body_size) / 2);
 	this.heatBar.drawHeatBar(ctx);
+
+	if (gs.currMap.isNearObstacle(this.currentTileLoc, true)){
+		wm.displayMessage(ctx, 'Press E to enter building');
+	}
 };
 
 

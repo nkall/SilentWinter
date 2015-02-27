@@ -5,6 +5,8 @@
 
 // Main GameState object (see gamestate.js)
 var gs = null;
+var wm = new WindowManager();
+
 // Arguments are the tile size and dimensions of the canvas
 var gc = new GameConstants(64, 1024, 512);
 

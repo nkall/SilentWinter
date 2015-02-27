@@ -7,8 +7,11 @@ function GameState(canvasWidth, canvasHeight){
 	this.mainMap = new Map(gc.mainMapWidth, gc.mainMapHeight, gc.tileImgs[0]);
 	this.mainMap.genGameMap();
 
+	this.currMap = this.mainMap;
+
 	// The player character -- see player.js for more information
-	this.player = new Player(this.mainMap.mapPixSize.x / 2, this.mainMap.mapPixSize.y / 2);
+	this.player = new Player(this.mainMap.mapPixSize.x / 2, 
+								this.mainMap.mapPixSize.y / 2);
 	this.frame = new Frame();
 }
 
