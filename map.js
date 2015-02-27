@@ -7,7 +7,26 @@ function Map(mapWidth, mapHeight, defaultTile){
 
 	// 2d Array of tiles representing the game map
 	this.map = null;
-	this.genGameMap();
+
+	// 2d Array with gaps showing location of items on map
+	this.items = new Array();
+}
+
+Map.prototype.addItems = function(){
+	for (var i = 0; i < gc.itemCount; i++) {
+		// Generate random item location
+		var itemLoc = new Coord(Math.floor(Math.random() * this.mapSize.x),
+								Math.floor(Math.random() * this.mapSize.y));
+		// Generate random item image
+		var itemImgIndex = Math.floor(Math.random() * gc.itemImgs.length);
+		// Create item if not overlapping anything else
+		if (!this.getTile(itemLoc).isObstructed){
+			if (this.items[itemLoc.x] === undefined){
+				this.items[itemLoc.x] = new Array();
+			}
+			this.items[itemLoc.x][itemLoc.y] = new Item();
+		}
+	};
 }
 
 Map.prototype.genTerrain = function (){
@@ -23,7 +42,7 @@ Map.prototype.genTerrain = function (){
  			} else {
  				var tileImg = this.defaultTile;
  			}
- 			newMap[x][y] = new Tile(tileImg, false);
+ 			newMap[x][y] = new Tile(tileImg, false, false);
  		}
  	}
  	this.map = newMap;
@@ -37,7 +56,7 @@ Map.prototype.addObstacles = function (){
 		// Generate random obstacle image
 		var obstacleImgIndex = Math.floor(Math.random() * gc.obstacleImgs.length);
 		// Create obstacle if not overlapping anything else
-		this.addObstacle(obstacleLoc, gc.obstacleImgs[obstacleImgIndex]);
+		this.addObstacle(obstacleLoc, gc.obstacleImgs[obstacleImgIndex], false);
 	}
 };
 
@@ -48,11 +67,12 @@ Map.prototype.addBuildings = function (){
 								Math.floor(Math.random() * this.mapSize.y));
 		// Generate random obstacle image
 		var buildingImgIndex = Math.floor(Math.random() * gc.buildingImgs.length);
-		this.addObstacle(buildingLoc, gc.buildingImgs[buildingImgIndex]);
+		this.addObstacle(buildingLoc, gc.buildingImgs[buildingImgIndex], true);
 	}
 };
 
 Map.prototype.isOverlapping = function(obstructedTiles){
+	// Check if overlapping other obstructions
 	for (var i = 0; i < obstructedTiles.length; ++i){
 		// Make sure this also works when obstacle is at map edge
 		obstructedTiles[i].wrapAroundLimits(new Coord(0,0), 
@@ -61,10 +81,44 @@ Map.prototype.isOverlapping = function(obstructedTiles){
 			return true;
 		}
 	}
+	// Check if overlapping player start position
+	var playerStartLoc = new Coord(gc.mainMapWidth / 2, gc.mainMapHeight / 2);
+	if (this.isNearObstacle(playerStartLoc, false)){
+		return true;
+	}
 	return false;
 };
 
-Map.prototype.addObstacle = function (obstacleLoc, obstacleImg){
+// Returns true if one of the tiles surrounding the argument tile is a building,
+// or if it is an obstacle in general, if needsToBeEnterable is false
+Map.prototype.isNearObstacle = function (loc, needsToBeEnterable){
+	var surroundingTiles = [loc
+						   , new Coord(loc.x-1, loc.y-1)
+						   , new Coord(loc.x-1, loc.y)
+						   , new Coord(loc.x-1, loc.y+1)
+						   , new Coord(loc.x, loc.y-1)
+						   , new Coord(loc.x, loc.y+1)
+						   , new Coord(loc.x+1, loc.y-1)
+						   , new Coord(loc.x+1, loc.y)
+						   , new Coord(loc.x+1, loc.y+1)
+						   ];
+	for (var i = 0; i < surroundingTiles.length; i++) {
+		surroundingTiles[i].wrapAroundLimits();
+		var currTile = this.getTile(surroundingTiles[i]);
+		if (currTile.isObstructed){
+			if (needsToBeEnterable){
+				if (currTile.isEnterable){
+					return true;
+				}
+			} else {
+				return true;
+			}
+		}
+	}
+	return false;
+};
+
+Map.prototype.addObstacle = function (obstacleLoc, obstacleImg, isEnterable){
 	// Obstacles take up four tiles, all with no image
 	var obstructedTiles = new Array();
 	obstructedTiles.push(new Coord(obstacleLoc.x, obstacleLoc.y))
@@ -78,8 +132,9 @@ Map.prototype.addObstacle = function (obstacleLoc, obstacleImg){
 			// Make sure this also works when obstacle is at map edge
 			obstructedTiles[i].wrapAroundLimits(new Coord(0,0), 
 						new Coord(this.mapSize.x, this.mapSize.y));
-			// Make tiles obstructing, and null
+			// Make tiles obstructing, and enterable if applicable
 			this.map[obstructedTiles[i].x][obstructedTiles[i].y].isObstructed = true;
+			this.map[obstructedTiles[i].x][obstructedTiles[i].y].isEnterable = isEnterable;
 		}
 	}
 };
@@ -100,4 +155,5 @@ Map.prototype.genGameMap = function() {
 	this.genTerrain();
 	this.addObstacles();
 	this.addBuildings();
+	this.addItems();
 };

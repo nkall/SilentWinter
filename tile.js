@@ -3,11 +3,14 @@
  *  or obstacle
  */
 
-function Tile(pic, isObstructed){
+function Tile(pic, isObstructed, isEnterable){
 	// Index of the tile image in GameConstant's tileImgs array
 	this.pic = pic;
 	this.isObstructed = isObstructed;
+	// Null unless the tile contains an obstruction/building
 	this.obstaclePic = null;
+	// Null unless the tile contains a building
+	this.innerMap = null;
 }
 
 Tile.prototype.drawTile = function(pixLoc, offset, ctx) {
@@ -21,7 +24,6 @@ Tile.prototype.drawObstacle = function (pixLoc, offset, ctx) {
 		ctx.drawImage(this.obstaclePic, pixLoc.x + offset.x, pixLoc.y + offset.y);
 	}
 };
-
 
 
 function Coord(x, y){
@@ -46,6 +48,10 @@ Coord.prototype.toTiles = function(){
 // Fixes coordinates that are off the map, thereby 'wrapping around' the
 // playable map surface, Mobius strip-style
 Coord.prototype.wrapAroundLimits = function(lowerLim, upperLim){
+	// Limits default to the size of the main map
+	if (lowerLim === undefined) {lowerLim = new Coord(0,0);}
+	if (upperLim === undefined) {upperLim = new Coord(gc.mainMapWidth,
+														   gc.mainMapHeight);}
 	while (this.x < lowerLim.x) { this.x += upperLim.x - lowerLim.x; }
 	while (this.x >= upperLim.x){ this.x -= upperLim.x - lowerLim.x; }
 	while (this.y < lowerLim.y) { this.y += upperLim.y - lowerLim.y; }

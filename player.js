@@ -29,8 +29,14 @@ Player.prototype.canMoveTo = function (nextPos){
 	return (!nextPosTile.isObstructed);
 };
 
+Player.prototype.update = function (map){
+	this.updatePos(map);
+	this.heat--;
+	this.heatBar.updateHeatBar(this.heat);
+}
+
 // Moves the player based on keypresses
-Player.prototype.updatePos = function (mapPixWidth, mapPixHeight){
+Player.prototype.updatePos = function (map){
 	var nextPosition = new Coord(this.loc.x, this.loc.y);
 	// Update based on keypresses
 	if (this.isPressingUp){
@@ -47,12 +53,15 @@ Player.prototype.updatePos = function (mapPixWidth, mapPixHeight){
 	}
 
 	// Reset position if walking off map
-	nextPosition.wrapAroundLimits(new Coord(0,0), new Coord(mapPixWidth, mapPixHeight));
+	nextPosition.wrapAroundLimits(new Coord(0,0), new Coord(map.mapPixSize.x, 
+															map.mapPixSize.y));
 	// Only move if the next position is not blocked
 	if (this.canMoveTo(nextPosition)){
 		this.loc = nextPosition;	
 	}
-	this.heatBar.updateHeatBar(this.heat);
+	if (map.isNearObstacle(this.loc.toTiles(), true)){
+		console.log('yes');
+	}
 };
 
 Player.prototype.drawPlayer = function (ctx){
@@ -70,12 +79,11 @@ function HeatBar(maxHeat){
 }
 
 HeatBar.prototype.updateHeatBar = function(heat){
-	this.heat--;
 	this.barFillLevel = this.barWidth * (heat / this.maxHeat);
-	console.log(this.barFillLevel);
 };
 
 HeatBar.prototype.drawHeatBar = function(ctx){
 	ctx.drawImage(gc.heatImgs[0], 0, 0);
-	ctx.drawImage(gc.heatImgs[1], 0, 0, this.barFillLevel, this.barHeight, 0, 0, this.barFillLevel, this.barHeight);
+	ctx.drawImage(gc.heatImgs[1], 0, 0, this.barFillLevel, this.barHeight, 0, 0, 
+												this.barFillLevel, this.barHeight);
 };

@@ -4,23 +4,21 @@
  */
 
 function GameState(canvasWidth, canvasHeight){
-	this.mainMap = new Map(500, 500, gc.tileImgs[0]);
+	this.mainMap = new Map(gc.mainMapWidth, gc.mainMapHeight, gc.tileImgs[0]);
+	this.mainMap.genGameMap();
+
 	// The player character -- see player.js for more information
-	this.player = new Player(this.mainMap.mapPixSize.x / 2, this.mainMap.mapPixSize.y / 2);
+	this.player = new Player();
 	this.frame = new Frame();
 }
 
 GameState.prototype.update = function (){
-	if (this.player.heat % 100 === 0){
-		console.log(this.player.heat);
-	}
-	this.player.heat--;
-	this.player.updatePos(this.mainMap.mapPixSize.x, this.mainMap.mapPixSize.y);
+	this.player.update(this.mainMap);
 	this.frame.updateFrame(this.player.loc.x, this.player.loc.y);
 }
 
 GameState.prototype.draw = function (ctx){
-	gs.frame.drawFrame(ctx);
+	gs.frame.drawFrame(ctx, this.mainMap);
 	gs.player.drawPlayer(ctx);
 }
 
@@ -43,13 +41,23 @@ function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
 	this.tileImgs = new Array();
 	this.buildingImgs = new Array();
 	this.obstacleImgs = new Array();
+	this.itemImgs = new Array();
 	this.heatImgs = new Array();
+
+	this.itemNames = ['food', 'fuel', 'elec', 'scrap', 'parts'];
 
 	// Odds of a non-snow tile forming (1 in 'x')
 	this.altTileSpawnOdds = 20;
 	// Number of obstacle generation passes to be run for the main map
 	this.obstacleCount = 5000;
-	this.buildingCount = 2000;
+	this.buildingCount = 1500;
+	// Number of random items scattered on the main map
+	this.itemCount = 500;
+
+	this.mainMapWidth = 500;
+	this.mainMapHeight = 500;
+	this.playerStartPos = new Coord(this.mainMapWidth / 2, 
+									this.mainMapHeight / 2);
 }
 
 // Preloads all necessary images for the game
@@ -59,6 +67,7 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 	var tileImgNames = ['terrain0.png', 'terrain1.png', 'terrain2.png'];
 	var obstacleImgNames = ['obstacle0.png', 'obstacle1.png', 'obstacle2.png'];
 	var buildingImgNames = ['building0.png', 'building1.png', 'building2.png'];
+	var itemImgNames = ['item0.png', 'item1.png', 'item2.png', 'item3.png', 'item4.png'];
 	var heatImgNames = ['heat0.png', 'heat1.png'];
 
 	// Keep count of loaded images to make sure each is loaded before being
@@ -66,7 +75,7 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 	// is asynchronous.
 	var loadCount = 0
 	var loadLimit = 1 + tileImgNames.length + obstacleImgNames.length +
-			buildingImgNames.length + heatImgNames.length;
+			buildingImgNames.length + itemImgNames.length + heatImgNames.length;
 
 	// Load player image
 	this.playerImg = new Image();
@@ -107,6 +116,18 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 		this.buildingImgs[i] = new Image();
 		this.buildingImgs[i].src = 'bin/' + buildingImgNames[i];
 		this.buildingImgs[i].onload = function (){
+			loadCount++;
+			if (loadCount === loadLimit){
+				callbackFn();
+			}
+		};
+	}
+
+	// Load item images
+	for (var i = 0; i < itemImgNames.length; i++){
+		this.itemImgs[i] = new Image();
+		this.itemImgs[i].src = 'bin/' + itemImgNames[i];
+		this.itemImgs[i].onload = function (){
 			loadCount++;
 			if (loadCount === loadLimit){
 				callbackFn();
