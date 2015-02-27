@@ -19,8 +19,8 @@ Map.prototype.addItems = function(){
 								Math.floor(Math.random() * this.mapSize.y));
 		// Generate random item image
 		var itemImgIndex = Math.floor(Math.random() * gc.itemImgs.length);
-		// Create item if not overlapping anything else
-		if (!this.getTile(itemLoc).isObstructed){
+		// Create item if not overlapping anything else or near building
+		if (!this.getTile(itemLoc).isObstructed && !this.isNearObstacle(itemLoc, true)){
 			if (this.items[itemLoc.x] === undefined){
 				this.items[itemLoc.x] = new Array();
 			}

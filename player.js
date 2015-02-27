@@ -24,6 +24,9 @@ function Player(x, y){
 	this.heatBar = new HeatBar(this.heat);
 
 	this.inventory = new Inventory(0,0,0,0,0);
+
+	this.lastItemCollected = null;
+	this.turnsSinceItemCollected = 50;
 }
 
 Player.prototype.update = function (){
@@ -38,10 +41,15 @@ Player.prototype.updateStatus = function() {
 	if (this.heat < 0){this.heat = 0;}
 
 	this.currentTileLoc = this.loc.toTiles();
+
 	var item = gs.currMap.getItem(this.currentTileLoc);
 	if (item !== undefined){
 		this.inventory.collectItem(item);
+		this.lastItemCollected = item;
+		this.turnsSinceItemCollected = 0;
 		gs.currMap.removeItem(this.currentTileLoc);
+	} else {
+		this.turnsSinceItemCollected++;
 	}
 };
 
@@ -84,6 +92,12 @@ Player.prototype.drawPlayer = function (ctx){
 
 	if (gs.currMap.isNearObstacle(this.currentTileLoc, true)){
 		wm.displayMessage(ctx, 'Press E to enter building');
+	}
+	if (this.turnsSinceItemCollected < 50){
+		console.log(this.lastItemCollected);
+		var itemMessage = (this.lastItemCollected.quantity.toString() + ' ' +
+						gc.itemFullNames[this.lastItemCollected.itemType] + ' Collected');
+		wm.displayMessage(ctx, itemMessage);
 	}
 };
 

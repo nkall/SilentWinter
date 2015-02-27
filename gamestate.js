@@ -16,12 +16,12 @@ function GameState(canvasWidth, canvasHeight){
 }
 
 GameState.prototype.update = function (){
-	this.player.update(this.mainMap);
+	this.player.update();
 	this.frame.updateFrame(this.player.loc.x, this.player.loc.y);
 };
 
 GameState.prototype.draw = function (ctx){
-	gs.frame.drawFrame(ctx, this.mainMap);
+	gs.frame.drawFrame(ctx);
 	gs.player.drawPlayer(ctx);
 };
 
@@ -48,6 +48,7 @@ function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
 	this.heatImgs = new Array();
 
 	this.itemNames = ['food', 'fuel', 'elec', 'scrap', 'parts'];
+	this.itemFullNames = ['Food', 'Fuel', 'Electronics', 'Scrap', 'Parts'];
 
 	// Odds of a non-snow tile forming (1 in 'x')
 	this.altTileSpawnOdds = 20;
@@ -55,7 +56,7 @@ function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
 	this.obstacleCount = 5000;
 	this.buildingCount = 1500;
 	// Number of random items scattered on the main map
-	this.itemCount = 500;
+	this.itemCount = 1000;
 
 	this.mainMapWidth = 500;
 	this.mainMapHeight = 500;

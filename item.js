@@ -12,7 +12,7 @@ Item.prototype.genRandomItem = function() {
 	// Random quantity between 1 and 100
 	var quantity = Math.floor(Math.random() * 100) + 1;
 	this.pic = gc.itemImgs[itemTypeIndex];
-	this.itemType = gc.itemNames[itemTypeIndex];
+	this.itemType = itemTypeIndex;
 	this.quantity = quantity;
 };
 
@@ -25,11 +25,11 @@ Item.prototype.drawItem = function(pixLoc, offset, ctx) {
 function Inventory(food, fuel, elec, scrap, parts){
 	this.food = food;
 	this.fuel = fuel;
-	this.elec = elec;
+	this.electronics = elec;
 	this.scrap = scrap;
 	this.parts = parts;
 }
 
 Inventory.prototype.collectItem = function (item){
-	this[item.itemType] += item.quantity;
+	this[gc.itemNames[item.itemType]] += item.quantity;
 };

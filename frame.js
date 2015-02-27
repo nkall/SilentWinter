@@ -15,7 +15,7 @@ Frame.prototype.updateFrame = function (playerX, playerY){
 	this.pixOffset.set(-(playerX % gc.tileSize), -(playerY % gc.tileSize));
 };
 
-Frame.prototype.drawTerrain = function(ctx, map){
+Frame.prototype.drawTerrain = function(ctx){
 	for (var x = -1; x < gc.canvasWidth; x++) {
 		for (var y = -1; y < gc.canvasHeight; y++) {
 			var loc = new Coord(x + this.frameStart.x, y + this.frameStart.y);
@@ -24,13 +24,13 @@ Frame.prototype.drawTerrain = function(ctx, map){
 			loc.wrapAroundLimits();
 
 			// Draw the tile at the given coordinates on screen
-			var currTile = map.getTile(loc);
+			var currTile = gs.currMap.getTile(loc);
 			currTile.drawTile((new Coord(x,y).toPixels()), this.pixOffset, ctx);
 		}
 	}	
 };
 
-Frame.prototype.drawObstacles = function(ctx, map){
+Frame.prototype.drawObstacles = function(ctx){
 	for (var x = -1; x < gc.canvasWidth; x++) {
 		for (var y = -1; y < gc.canvasHeight; y++) {
 			var loc = new Coord(x + this.frameStart.x, y + this.frameStart.y);
@@ -43,15 +43,15 @@ Frame.prototype.drawObstacles = function(ctx, map){
 			currTile.drawObstacle((new Coord(x,y).toPixels()), this.pixOffset, ctx);
 
 			// Draw items, if applicable
-			var item = map.getItem(loc);
+			var item = gs.currMap.getItem(loc);
 			if (item !== undefined){
-				map.items[loc.x][loc.y].drawItem((new Coord(x,y).toPixels()), this.pixOffset, ctx);
+				gs.currMap.items[loc.x][loc.y].drawItem((new Coord(x,y).toPixels()), this.pixOffset, ctx);
 			}
 		}
 	}
 }
 
-Frame.prototype.drawFrame = function (ctx, map){
-	this.drawTerrain(ctx, map);
-	this.drawObstacles(ctx, map);
+Frame.prototype.drawFrame = function (ctx){
+	this.drawTerrain(ctx);
+	this.drawObstacles(ctx);
 };
