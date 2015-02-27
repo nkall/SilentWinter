@@ -18,7 +18,8 @@ function GameState(canvasWidth, canvasHeight){
 GameState.prototype.enterBuilding = function() {
 	var buildingLoc = this.currMap.getNearbyBuildingLocation(this.player.loc.toTiles());
 	if (buildingLoc !== null){
-		
+		this.currMap = this.currMap.createInteriorMap(buildingLoc);
+		this.player.loc = new Coord(this.currMap.mapPixSize.x / 2, this.currMap.mapPixSize.y / 2);
 	};
 };
 
@@ -53,7 +54,7 @@ function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
 	this.altTileSpawnOdds = 20;
 	// Number of obstacle generation passes to be run for the main map
 	this.obstacleCount = 5000;
-	this.buildingCount = 1500;
+	this.buildingCount = 1000;
 	// Number of random items scattered on the main map
 	this.itemCount = 1000;
 
@@ -61,4 +62,6 @@ function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
 	this.mainMapHeight = 500;
 	this.playerStartPos = new Coord(this.mainMapWidth / 2, 
 									this.mainMapHeight / 2);
+
+	this.interiorMapSize = 50;
 }

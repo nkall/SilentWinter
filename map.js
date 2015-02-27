@@ -5,29 +5,33 @@ function Map(mapWidth, mapHeight, defaultTile){
 	this.mapPixSize = this.mapSize.toPixels();
 	this.defaultTile = defaultTile;
 
-	// 2d Array of tiles representing the inner map of a building
-	this.map = null;
+	// 2d Array of tiles representing the map
+	this.map = new Array();
 
 	// 2d Array with gaps showing location of items on map
 	this.items = new Array();
 }
+
+Map.prototype.addItem = function(loc) {
+	// Generate random item image
+	var itemImgIndex = Math.floor(Math.random() * gc.itemImgs.length);
+	// Create item if not overlapping anything else or near building
+	if (!this.getTile(loc).isObstructed && !this.isNearObstacle(loc, true)){
+		if (this.items[loc.x] === undefined){
+			this.items[loc.x] = new Array();
+		}
+		this.items[loc.x][loc.y] = new Item();
+	}
+};
 
 Map.prototype.addItems = function(){
 	for (var i = 0; i < gc.itemCount; i++) {
 		// Generate random item location
 		var itemLoc = new Coord(Math.floor(Math.random() * this.mapSize.x),
 								Math.floor(Math.random() * this.mapSize.y));
-		// Generate random item image
-		var itemImgIndex = Math.floor(Math.random() * gc.itemImgs.length);
-		// Create item if not overlapping anything else or near building
-		if (!this.getTile(itemLoc).isObstructed && !this.isNearObstacle(itemLoc, true)){
-			if (this.items[itemLoc.x] === undefined){
-				this.items[itemLoc.x] = new Array();
-			}
-			this.items[itemLoc.x][itemLoc.y] = new Item();
-		}
-	};
-}
+		this.addItem(itemLoc);
+	}
+};
 
 Map.prototype.genTerrain = function (){
 	var newMap = new Array();
@@ -126,7 +130,7 @@ Map.prototype.isNearObstacle = function (loc, needsToBeEnterable){
 	return false;
 };
 
-Map.prototype.genInteriorMap = function (loc){
+Map.prototype.createInteriorMap = function (loc){
 	// Make sure the map is the same for all tiles comprising the building
 	var possibleBuildTiles = [new Coord(loc.x-1, loc.y-1)
 						   , new Coord(loc.x-1, loc.y)
@@ -137,8 +141,21 @@ Map.prototype.genInteriorMap = function (loc){
 						   , new Coord(loc.x+1, loc.y)
 						   , new Coord(loc.x+1, loc.y+1)
 						   ];
-
-}
+	var buildTiles = [loc];
+	for (var i = 0; i < possibleBuildTiles.length; i++) {
+		possibleBuildTiles[i].wrapAroundLimits();
+		var currTile = this.getTile(possibleBuildTiles[i]);
+		if (currTile.isEnterable){
+			buildTiles[buildTiles.length] = possibleBuildTiles[i];
+		}
+	}
+	var interiorMap = this.genInteriorMap();
+	for (var i = 0; i < buildTiles.length; i++) {
+		this.map[buildTiles[i].x][buildTiles[i].y].innerMap = interiorMap;
+	}
+	console.log(this.map[buildTiles[0].x][buildTiles[0].y]);
+	return interiorMap;
+};
 
 // If there is a building nearby, this returns the location of
 // the nearby tile of the building.  Otherwise, it returns null
@@ -157,7 +174,7 @@ Map.prototype.getNearbyBuildingLocation = function (loc){
 		surroundingTiles[i].wrapAroundLimits();
 		var currTile = this.getTile(surroundingTiles[i]);
 		if (currTile.isObstructed && currTile.isEnterable){
-			return currTile;
+			return surroundingTiles[i];
 		}
 	}
 	return null;
@@ -172,7 +189,7 @@ Map.prototype.addObstacle = function (obstacleLoc, obstacleImg, isEnterable){
 	obstructedTiles.push(new Coord(obstacleLoc.x, obstacleLoc.y + 1));
 	obstructedTiles.push(new Coord(obstacleLoc.x + 1, obstacleLoc.y + 1));
 
-	// Obstacles can't be overlapping or horizontally bordering a building
+	// Obstacles can't be overlapping & buildings can't horizontally border another building
 	if (!this.isOverlapping(obstructedTiles) && !this.isNearObstacle(obstacleLoc, true) && 
 		!this.isNearObstacle(obstructedTiles[1], true) && 
 		!this.isNearObstacle(obstructedTiles[2], true) && 
@@ -203,6 +220,9 @@ Map.prototype.removeItem = function (loc){
 };
 
 Map.prototype.getTile = function (loc){
+	//if (this.map[loc.x] === undefined){
+	//	console.trace();
+	//}
 	return this.map[loc.x][loc.y];
 };
 
@@ -218,4 +238,53 @@ Map.prototype.genGameMap = function() {
 	this.addObstacles();
 	this.addBuildings();
 	this.addItems();
+};
+
+// Hardcoded for now, but will have different forms in the future
+Map.prototype.genInteriorMap = function() {
+	var newMap = new Map(gc.interiorMapSize, gc.interiorMapSize, gc.tileImgs[0]);
+	for (var x = 0; x < newMap.mapSize.x; x++) {
+ 		newMap.map[x] = new Array();
+ 		for (var y = 0; y < newMap.mapSize.y; y++) {
+ 			newMap.map[x][y] = new Tile(gc.tileImgs[0], false, false);
+ 		}
+ 	}
+
+ 	var mapCent = new Coord(newMap.mapSize.x / 2, newMap.mapSize.y / 2);
+ 	var floorTiles = [mapCent
+ 					, new Coord(mapCent.x-1, mapCent.y)
+ 					, new Coord(mapCent.x, mapCent.y-1)
+ 					, new Coord(mapCent.x-1, mapCent.y-1)
+ 					, new Coord(mapCent.x-1, mapCent.y-2)
+ 					, new Coord(mapCent.x, mapCent.y-2)
+ 					, new Coord(mapCent.x-1, mapCent.y-3)
+ 					, new Coord(mapCent.x, mapCent.y-3)
+ 					];
+ 	for (var i = 0; i < floorTiles.length; i++) {
+ 		newMap.map[floorTiles[i].x][floorTiles[i].y].pic = gc.interiorFloorImgs[0];
+ 	};
+ 	var wallTiles = [new Coord(mapCent.x-2, mapCent.y)
+ 					, new Coord(mapCent.x-2, mapCent.y-1)
+ 					, new Coord(mapCent.x-2, mapCent.y-2)
+ 					, new Coord(mapCent.x-2, mapCent.y-3)
+ 					, new Coord(mapCent.x-2, mapCent.y-4)
+ 					, new Coord(mapCent.x-2, mapCent.y+1)
+ 					, new Coord(mapCent.x+1, mapCent.y)
+ 					, new Coord(mapCent.x+1, mapCent.y-1)
+ 					, new Coord(mapCent.x+1, mapCent.y-2)
+ 					, new Coord(mapCent.x+1, mapCent.y-3)
+ 					, new Coord(mapCent.x+1, mapCent.y-4)
+ 					, new Coord(mapCent.x+1, mapCent.y+1)
+ 					, new Coord(mapCent.x-1, mapCent.y-4)
+ 					, new Coord(mapCent.x, mapCent.y-4)
+ 					, new Coord(mapCent.x, mapCent.y+1)
+ 					];
+ 	for (var i = 0; i < wallTiles.length; i++) {
+ 		newMap.map[wallTiles[i].x][wallTiles[i].y].pic = gc.interiorWallImgs[0];
+ 		newMap.map[wallTiles[i].x][wallTiles[i].y].isObstructed = true;
+ 	};
+
+ 	newMap.addItem(new Coord(mapCent.x, mapCent.y-3));
+
+	return newMap;
 };

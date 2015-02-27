@@ -24,6 +24,7 @@ Frame.prototype.drawTerrain = function(ctx){
 			loc.wrapAroundLimits();
 
 			// Draw the tile at the given coordinates on screen
+			//console.log(loc);
 			var currTile = gs.currMap.getTile(loc);
 			currTile.drawTile((new Coord(x,y).toPixels()), this.pixOffset, ctx);
 		}
@@ -39,7 +40,7 @@ Frame.prototype.drawObstacles = function(ctx){
 			loc.wrapAroundLimits();
 
 			// Draw the tile at the given coordinates on screen
-			var currTile = gs.mainMap.getTile(loc);
+			var currTile = gs.currMap.getTile(loc);
 			currTile.drawObstacle((new Coord(x,y).toPixels()), this.pixOffset, ctx);
 
 			// Draw items, if applicable

@@ -5,6 +5,8 @@
 function Player(x, y){
 	// X and Y here are actual pixel coordinates, not tiles
 	this.loc = new Coord(x,y);
+	// Location on the main map
+	this.mainLoc = this.loc;
 	this.currentTileLoc = this.loc.toTiles();
 
 	// Length/width of player's body, in pixels
@@ -50,6 +52,9 @@ Player.prototype.updateStatus = function() {
 		gs.currMap.removeItem(this.currentTileLoc);
 	} else {
 		this.turnsSinceItemCollected++;
+		if (this.turnsSinceItemCollected > 50){
+			this.turnsSinceItemCollected = 50;
+		}
 	}
 };
 
@@ -91,6 +96,7 @@ Player.prototype.drawPlayer = function (ctx){
 	this.heatBar.drawHeatBar(ctx);
 
 	if (gs.currMap.isNearObstacle(this.currentTileLoc, true)){
+		this.turnsSinceItemCollected = 50;
 		wm.displayMessage(ctx, 'Press E to enter building');
 	}
 	if (this.turnsSinceItemCollected < 50){
