@@ -3,7 +3,8 @@
 GameConstants.prototype.loadAllImages = function (callbackFn) {
 	// These should be updated as image file names change
 	var playerImgName = 'player.png';
-	var tileImgNames = ['terrain0.png', 'terrain1.png', 'terrain2.png'];
+	var tileImgNames = ['terrain0.png', 'terrain1.png', 'terrain2.png', 'terrain3.png', 
+						'terrain4.png', 'terrain5.png'];
 	var obstacleImgNames = ['obstacle0.png', 'obstacle1.png', 'obstacle2.png'];
 	var buildingImgNames = ['building0.png', 'building1.png', 'building2.png'];
 	var itemImgNames = ['item0.png', 'item1.png', 'item2.png', 'item3.png', 'item4.png'];
