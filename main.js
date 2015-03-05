@@ -107,3 +107,23 @@ function addKeyboardEvents(){
 
 	}, false);
 };
+
+var music = document.getElementById('backMusic');
+
+document.getElementById('mute').addEventListener('click', function (e)
+{
+    e = e || window.event;
+    music.muted = !music.muted;
+    e.preventDefault();
+	music.loop = true;
+}, false);
+
+var music2 = document.getElementById('backMusic2');
+
+document.getElementById('mute').addEventListener('click', function (e)
+{
+    e = e || window.event;
+    music2.muted = !music2.muted;
+    e.preventDefault();
+	music2.loop = true;
+}, false);

@@ -1,4 +1,12 @@
 <!DOCTYPE HTML>
+<audio id="backMusic" autoplay="autoplay">
+  <source src="http://people.ucsc.edu/~edrlopez/CMPM20/Silent%20Winter/Winter-comes-guitar-1.wav" />
+</audio> 
+
+<audio id="backMusic2" autoplay="autoplay">
+  <source src="http://people.ucsc.edu/~edrlopez/CMPM20/Silent%20Winter/winter-breeze.wav" />
+</audio> 
+
 <html>
   <head>
 	<meta charset="UTF-8">
@@ -14,7 +22,10 @@
 	<script src="main.js" type="text/javascript"></script>
   </head>
   <body>
-    <canvas id="canvas" width="1024" height="512"></canvas>
+    <canvas id="canvas" width="1024" height="512"></canvas><br/>
+    <button>
+      <a id="mute">Toggle Sound</a>
+    </button>
     <h4>Controls:</h4>
     <span>Use WASD or arrow keys to move, <i>I</i> to view inventory, and <i>E</i> to enter or exit a building.
       Collect as many supplies as you can before your heat runs out!</span>
