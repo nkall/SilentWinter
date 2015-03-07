@@ -1,6 +1,8 @@
 function WindowManager (){
-	this.possibleGameModes = ["Scavenge", "Inventory", "Upgrade", "Dialog"];
+	this.possibleGameModes = ["Scavenge", "Inventory", "Base", "Upgrade", "Dialog"];
 	this.gameMode = this.possibleGameModes[0];
+
+	this.buttons = new Array();
 }
 
 WindowManager.prototype.displayMessage = function(ctx, string) {
@@ -40,6 +42,21 @@ WindowManager.prototype.drawInventoryContents = function (ctx){
 	};
 }
 
+WindowManager.prototype.handleMousePress = function (loc){
+
+};
+
+WindowManager.prototype.setupBaseMenu = function (ctx){
+	this.buttons[this.buttons.length] = new Button(new Coord(5,5), gc.uiElementImgs[1], "No");
+};
+
+WindowManager.prototype.drawBaseMenu = function (ctx){
+	ctx.drawImage(gc.uiElementImgs[0], 0, 0);
+	for (var i = 0; i < this.buttons.length; i++){
+		this.buttons[0].drawButton(ctx);
+	}
+};
+
 WindowManager.prototype.drawInventory = function (ctx){
 	// Dim screen
 	ctx.save();
@@ -65,6 +82,8 @@ WindowManager.prototype.update = function (){
 			gs.player.update();
 			gs.frame.updateFrame(gs.player.loc.x, gs.player.loc.y);
 			break;
+		case "Base":
+			break;
 		case "Inventory":
 			break;
 		case "Upgrade":
@@ -83,9 +102,26 @@ WindowManager.prototype.draw = function (ctx){
 			this.drawScavenge(ctx);
 			this.drawInventory(ctx);
 			break;
+		case "Base":
+			this.drawBaseMenu(ctx);
+			break;
 		case "Upgrade":
 			break;
 		case "Dialog":
 			break;
 	}
+};
+
+function Button(loc, img, txt){
+	this.loc = loc;
+	this.img = img;
+	this.txt = txt;
+}
+
+Button.prototype.drawButton = function(ctx) {
+	ctx.drawImage(this.img, this.loc.x, this.loc.y);
+};
+
+Button.prototype.detectClick = function(loc) {
+	
 };

@@ -106,6 +106,14 @@ function addKeyboardEvents(){
 		}
 
 	}, false);
+
+	$("canvas")[0].addEventListener("click", function(e){
+		if (wm.gameMode === "Base" || 
+				wm.gameMode === "Upgrade" ||
+				wm.gameMode === "Dialog"){
+			wm.checkMousePress(new Coord(e.clientX, e.clientY));
+		}
+	}, false);
 };
 
 var music = document.getElementById('backMusic');

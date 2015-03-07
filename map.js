@@ -179,6 +179,16 @@ Map.prototype.getNearbyBuildingLocation = function (loc){
 	return null;
 };
 
+Map.prototype.buildingIsBase = function(loc) {
+	if ((loc.x === this.mapSize.x / 2 ||
+			loc.x === this.mapSize.x / 2 - 1) && 
+			(loc.y === this.mapSize.y / 2 - 2 ||
+			loc.y === this.mapSize.y / 2 - 3)){
+		return true;
+	}
+	return false;
+};
+
 // Adds a new obstacle to the map if certain conditions are met
 Map.prototype.addObstacle = function (obstacleLoc, obstacleImg, isEnterable){
 	// Obstacles take up four tiles, all with no image

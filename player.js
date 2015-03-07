@@ -101,12 +101,17 @@ Player.prototype.drawPlayer = function (ctx){
 	this.heatBar.drawHeatBar(ctx);
 
 	if (gs.currMap.isNearObstacle(this.currentTileLoc, true)){
+		var buildingLoc = gs.currMap.getNearbyBuildingLocation(this.currentTileLoc);
 		this.turnsSinceItemCollected = 50;
-		var movingDirection = 'enter';
-		if (gs.currMap !== gs.mainMap){
-			movingDirection = 'exit';
+		if (gs.currMap.buildingIsBase(buildingLoc)){
+			wm.displayMessage(ctx, 'Press E to return to base');
+		} else {
+			var movingDirection = 'enter';
+			if (gs.currMap !== gs.mainMap){
+				movingDirection = 'exit';
+			}
+			wm.displayMessage(ctx, 'Press E to ' + movingDirection + ' building');
 		}
-		wm.displayMessage(ctx, 'Press E to ' + movingDirection + ' building');
 	}
 	if (this.turnsSinceItemCollected < 50){
 		var itemMessage = (this.lastItemCollected.quantity.toString() + ' ' +

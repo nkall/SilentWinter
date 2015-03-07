@@ -12,12 +12,16 @@ function GameState(canvasWidth, canvasHeight){
 	// The player character -- see player.js for more information
 	this.player = new Player(this.mainMap.mapPixSize.x / 2, 
 								this.mainMap.mapPixSize.y / 2);
+	this.base = new Base();
 	this.frame = new Frame();
 }
 
 GameState.prototype.enterBuilding = function() {
 	var buildingLoc = this.currMap.getNearbyBuildingLocation(this.player.loc.toTiles());
-	if (buildingLoc !== null){
+	if (this.mainMap.buildingIsBase(buildingLoc)){
+		wm.setupBaseMenu();
+		wm.gameMode = "Base";
+	} else if (buildingLoc !== null){
 		if (this.currMap === this.mainMap){
 			this.player.mainLoc = this.player.loc;
 			var innerMap = this.currMap.getTile(buildingLoc).innerMap;
@@ -57,6 +61,7 @@ function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
 	this.heatImgs = new Array();
 	this.interiorWallImgs = new Array();
 	this.interiorFloorImgs = new Array();
+	this.uiElementImgs = new Array();
 
 	this.itemNames = ['food', 'fuel', 'elec', 'scrap', 'parts'];
 	this.itemFullNames = ['Food', 'Fuel', 'Electronics', 'Scrap', 'Parts'];

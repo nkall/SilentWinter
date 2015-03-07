@@ -11,14 +11,15 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 	var heatImgNames = ['heat0.png', 'heat1.png'];
 	var interiorWallNames = ['interior_wall0.png'];
 	var interiorFloorNames = ['interior_floor0.png'];
+	var uiElementNames = ['ui0.png', 'ui1.png'];
 
 	// Keep count of loaded images to make sure each is loaded before being
 	// displayed. Otherwise, this would be callback hell, since image loading
 	// is asynchronous.
-	var loadCount = 0
+	var loadCount = 0;
 	var loadLimit = 1 + tileImgNames.length + obstacleImgNames.length +
 			buildingImgNames.length + itemImgNames.length + heatImgNames.length +
-			interiorWallNames.length + interiorFloorNames.length;
+			interiorWallNames.length + interiorFloorNames.length + uiElementNames.length;
 
 	// Load player image
 	this.playerImg = new Image();
@@ -107,6 +108,18 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 		this.interiorFloorImgs[i] = new Image();
 		this.interiorFloorImgs[i].src = 'bin/' + interiorFloorNames[i];
 		this.interiorFloorImgs[i].onload = function (){
+			loadCount++;
+			if (loadCount === loadLimit){
+				callbackFn();
+			}
+		};
+	}
+
+	// Load menu background and buttons
+	for (var i = 0; i < uiElementNames.length; i++){
+		this.uiElementImgs[i] = new Image();
+		this.uiElementImgs[i].src = 'bin/' + uiElementNames[i];
+		this.uiElementImgs[i].onload = function (){
 			loadCount++;
 			if (loadCount === loadLimit){
 				callbackFn();
