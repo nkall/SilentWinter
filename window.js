@@ -42,19 +42,88 @@ WindowManager.prototype.drawInventoryContents = function (ctx){
 	};
 }
 
-WindowManager.prototype.handleMousePress = function (loc){
-
+WindowManager.prototype.handleMousePress = function (ctx, loc){
+	for (var i = 0; i < this.buttons.length; i++){
+		if (this.buttons[i].isColliding(loc)){
+			this.activateButton(ctx, this.buttons[i]);
+		}
+	}
 };
 
-WindowManager.prototype.setupBaseMenu = function (ctx){
-	this.buttons[this.buttons.length] = new Button(new Coord(5,5), gc.uiElementImgs[1], "No");
+WindowManager.prototype.activateButton = function (ctx, button){
+	if (button.txt == "Ok"){
+		gs.player = new Player(gs.mainMap.mapPixSize.x / 2, 
+								gs.mainMap.mapPixSize.y / 2);
+		this.gameMode = "Scavenge";
+	} else if (button.txt == "Next Season"){
+		this.gameMode = "Dialog";
+		var dialogData = this.prepareDialog();
+		this.drawDialog(ctx, dialogData)
+	}
+};
+
+WindowManager.prototype.drawDialog = function (ctx, dialogData){
+	ctx.drawImage(gc.uiElementImgs[3], 0, 0);
+	this.drawPerson(ctx, 0);
+	populationGain = dialogData[0]
+	/*if (populationGain > 0){
+	} else if (populationGain === 0){
+
+	} else {
+
+	}*/
+	this.buttons[0].drawButton(ctx);
+};
+
+WindowManager.prototype.prepareDialog = function (){
+	gs.base.updateBaseSupplies();
+	console.log(gs.base.inventory)
+	var populationGain = 0;
+	var causeOfDeath = null;
+	if (gs.base.inventory.food < 0 && gs.base.inventory.fuel < 0){
+		populationGain += gs.base.inventory.food + gs.base.inventory.fuel;
+		causeOfDeath = "starvation and hypothermia";
+	} else if (gs.base.inventory.fuel < 0){
+		populationGain += gs.base.inventory.fuel
+		causeOfDeath = "hypothermia";
+	} else if (gs.base.inventory.food < 0){
+		populationGain += gs.base.inventory.food
+		causeOfDeath = "starvation";
+	} else {
+		populationGain = (Math.random() * 24) + 2;
+	}
+	gs.base.population += populationGain;
+	if (gs.base.population < 1){
+		populationGain -= gs.base.population - 2;
+		gs.base.population = 1;
+	}
+
+	this.buttons = new Array();
+	this.buttons[this.buttons.length] = new Button(new Coord(475,400), 
+					gc.uiElementImgs[1], "Ok", new Coord(300, 75));
+	return [populationGain, causeOfDeath]
+};
+
+WindowManager.prototype.setupBaseMenu = function (){
+	gs.base.addToInventory(gs.player.inventory);
+	this.buttons = new Array();
+	this.buttons[this.buttons.length] = new Button(new Coord(550,240), 
+					gc.uiElementImgs[1], "Manage Base", new Coord(400, 100));
+	this.buttons[this.buttons.length] = new Button(new Coord(550,365), 
+					gc.uiElementImgs[1], "Next Season", new Coord(400, 100));
 };
 
 WindowManager.prototype.drawBaseMenu = function (ctx){
 	ctx.drawImage(gc.uiElementImgs[0], 0, 0);
 	for (var i = 0; i < this.buttons.length; i++){
-		this.buttons[0].drawButton(ctx);
+		this.buttons[i].drawButton(ctx);
 	}
+	gs.base.drawBase(ctx);
+	this.drawPerson(ctx, 2);
+};
+
+WindowManager.prototype.drawPerson = function (ctx, index){
+	ctx.drawImage(gc.peopleImgs[index], 0, 212);
 };
 
 WindowManager.prototype.drawInventory = function (ctx){
@@ -112,14 +181,29 @@ WindowManager.prototype.draw = function (ctx){
 	}
 };
 
-function Button(loc, img, txt){
+function Button(loc, img, txt, imgSize){
 	this.loc = loc;
 	this.img = img;
 	this.txt = txt;
+	this.imgSize = imgSize;
+}
+
+Button.prototype.isColliding = function(loc) {
+	if (loc.x >= this.loc.x && loc.x <= this.loc.x + this.imgSize.x && 
+		loc.y >= this.loc.y && loc.y <= this.loc.y + this.imgSize.y){
+		return true;
+	}
 }
 
 Button.prototype.drawButton = function(ctx) {
-	ctx.drawImage(this.img, this.loc.x, this.loc.y);
+	ctx.save();
+	ctx.drawImage(this.img, this.loc.x, this.loc.y, this.imgSize.x, this.imgSize.y);
+	ctx.font = '30pt Helvetica';
+	ctx.fillStyle = '#0000000';
+	ctx.textAlign = 'center';
+	ctx.fillText(this.txt, this.loc.x + this.imgSize.x / 2, this.loc.y + this.imgSize.y / 2 + 10);
+
+	ctx.restore();
 };
 
 Button.prototype.detectClick = function(loc) {

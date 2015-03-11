@@ -11,15 +11,20 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 	var heatImgNames = ['heat0.png', 'heat1.png'];
 	var interiorWallNames = ['interior_wall0.png'];
 	var interiorFloorNames = ['interior_floor0.png'];
-	var uiElementNames = ['ui0.png', 'ui1.png'];
+	var uiElementNames = ['ui0.png', 'ui1.png', 'ui2.png', 'ui3.png'];
+	var baseImgName = 'base.png';
+	var baseUpgradeNames = ['base_living1.png', 'base_living2.png', 'base_generators1.png',
+							'base_generators2.png', 'base_greenhouse1.png', 'base_greenhouse2.png'];
+	var peopleImgNames = ['person0.png', 'person1.png', 'person2.png'];
 
 	// Keep count of loaded images to make sure each is loaded before being
 	// displayed. Otherwise, this would be callback hell, since image loading
 	// is asynchronous.
 	var loadCount = 0;
-	var loadLimit = 1 + tileImgNames.length + obstacleImgNames.length +
+	var loadLimit = 2 + tileImgNames.length + obstacleImgNames.length +
 			buildingImgNames.length + itemImgNames.length + heatImgNames.length +
-			interiorWallNames.length + interiorFloorNames.length + uiElementNames.length;
+			interiorWallNames.length + interiorFloorNames.length + uiElementNames.length +
+			baseUpgradeNames.length + peopleImgNames.length;
 
 	// Load player image
 	this.playerImg = new Image();
@@ -120,6 +125,40 @@ GameConstants.prototype.loadAllImages = function (callbackFn) {
 		this.uiElementImgs[i] = new Image();
 		this.uiElementImgs[i].src = 'bin/' + uiElementNames[i];
 		this.uiElementImgs[i].onload = function (){
+			loadCount++;
+			if (loadCount === loadLimit){
+				callbackFn();
+			}
+		};
+	}
+	
+	// Load main base image
+	this.baseImg = new Image();
+	this.baseImg.src = 'bin/' + baseImgName;
+	this.baseImg.onload = function (){
+		loadCount++;
+		if (loadCount === loadLimit){
+			callbackFn();
+		}
+	};
+
+	// Load upgraded base overlay images
+	for (var i = 0; i < baseUpgradeNames.length; i++){
+		this.baseUpgradeImgs[i] = new Image();
+		this.baseUpgradeImgs[i].src = 'bin/' + baseUpgradeNames[i];
+		this.baseUpgradeImgs[i].onload = function (){
+			loadCount++;
+			if (loadCount === loadLimit){
+				callbackFn();
+			}
+		};
+	}
+
+	// Load people images
+	for (var i = 0; i < peopleImgNames.length; i++){
+		this.peopleImgs[i] = new Image();
+		this.peopleImgs[i].src = 'bin/' + peopleImgNames[i];
+		this.peopleImgs[i].onload = function (){
 			loadCount++;
 			if (loadCount === loadLimit){
 				callbackFn();

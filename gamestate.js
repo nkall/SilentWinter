@@ -52,7 +52,7 @@ function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
 	this.canvasHeight = (canvasPixHeight / this.tileSize) + 1;
 
 	// Images used in displaying various map elements/items/characters
-	// Remains uninitialized until loadAllImages() is called in main
+	// Remains uninitialized until loadAllImages() is called in imageloader.js
 	this.playerImg = null;
 	this.tileImgs = new Array();
 	this.buildingImgs = new Array();
@@ -62,6 +62,9 @@ function GameConstants(tileSize, canvasPixWidth, canvasPixHeight){
 	this.interiorWallImgs = new Array();
 	this.interiorFloorImgs = new Array();
 	this.uiElementImgs = new Array();
+	this.baseImg = null;
+	this.baseUpgradeImgs = new Array();
+	this.peopleImgs = new Array();
 
 	this.itemNames = ['food', 'fuel', 'elec', 'scrap', 'parts'];
 	this.itemFullNames = ['Food', 'Fuel', 'Electronics', 'Scrap', 'Parts'];

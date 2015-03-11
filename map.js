@@ -249,7 +249,7 @@ Map.prototype.genGameMap = function() {
 	this.addItems();
 };
 
-// Hardcoded for now, but will have different building designs in the future
+// I'm ashamed at how sloppily hardcoded this is, but one does what one must to meet deadlines
 Map.prototype.genInteriorMap = function() {
 	var newMap = new Map(gc.interiorMapSize, gc.interiorMapSize, gc.tileImgs[0]);
 	for (var x = 0; x < newMap.mapSize.x; x++) {
@@ -271,17 +271,24 @@ Map.prototype.genInteriorMap = function() {
  					, new Coord(mapCent.x, mapCent.y-4)
  					, new Coord(mapCent.x-1, mapCent.y+1)
  					, new Coord(mapCent.x, mapCent.y+1)
+ 					, new Coord(mapCent.x-2, mapCent.y)
+ 					, new Coord(mapCent.x-2, mapCent.y-1)
+ 					, new Coord(mapCent.x-2, mapCent.y-2)
+ 					, new Coord(mapCent.x-2, mapCent.y-3)
+ 					, new Coord(mapCent.x-2, mapCent.y+1)
  					];
  	for (var i = 0; i < floorTiles.length; i++) {
  		newMap.map[floorTiles[i].x][floorTiles[i].y].pic = gc.interiorFloorImgs[0];
  	};
- 	var wallTiles = [new Coord(mapCent.x-2, mapCent.y)
- 					, new Coord(mapCent.x-2, mapCent.y-1)
- 					, new Coord(mapCent.x-2, mapCent.y-2)
- 					, new Coord(mapCent.x-2, mapCent.y-3)
- 					, new Coord(mapCent.x-2, mapCent.y-4)
- 					, new Coord(mapCent.x-2, mapCent.y+1)
+ 	var wallTiles = [new Coord(mapCent.x-3, mapCent.y)
+ 					, new Coord(mapCent.x-3, mapCent.y-1)
+ 					, new Coord(mapCent.x-3, mapCent.y-2)
+ 					, new Coord(mapCent.x-3, mapCent.y-3)
+ 					, new Coord(mapCent.x-3, mapCent.y-4)
+ 					, new Coord(mapCent.x-3, mapCent.y+1)
+ 					, new Coord(mapCent.x-3, mapCent.y+2)
  					, new Coord(mapCent.x-2, mapCent.y+2)
+ 					, new Coord(mapCent.x-2, mapCent.y-4)
  					, new Coord(mapCent.x+1, mapCent.y)
  					, new Coord(mapCent.x+1, mapCent.y-1)
  					, new Coord(mapCent.x+1, mapCent.y-2)

@@ -111,7 +111,7 @@ function addKeyboardEvents(){
 		if (wm.gameMode === "Base" || 
 				wm.gameMode === "Upgrade" ||
 				wm.gameMode === "Dialog"){
-			wm.checkMousePress(new Coord(e.clientX, e.clientY));
+			wm.handleMousePress($("#canvas")[0].getContext("2d"), new Coord(e.clientX, e.clientY));
 		}
 	}, false);
 };

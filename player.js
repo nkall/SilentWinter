@@ -41,9 +41,10 @@ Player.prototype.updateStatus = function() {
 	if (gs.currMap === gs.mainMap){
 		this.heat--;
 	}
-	// Restart game if the heat runs out.  Eventually, this will be changed.
+	// Return to base if heat runs out
 	if (this.heat < 1){
-		gs = new GameState(gc.canvasPixWidth, gc.canvasPixHeight);
+		wm.setupBaseMenu();
+		wm.gameMode = "Base";
 	}
 	this.heatBar.updateHeatBar(this.heat);
 
@@ -136,4 +137,12 @@ HeatBar.prototype.drawHeatBar = function(ctx){
 	ctx.drawImage(gc.heatImgs[0], 0, 0);
 	ctx.drawImage(gc.heatImgs[1], 0, 0, this.barFillLevel, this.barHeight, 0, 0, 
 												this.barFillLevel, this.barHeight);
+	if (this.barFillLevel < 90){
+		// Dim screen
+		ctx.save();
+		ctx.globalAlpha= 1 - (this.barFillLevel / 90);
+		ctx.fillStyle = '#000000';
+		ctx.fillRect(0, 0, gc.canvasPixWidth, gc.canvasPixHeight);
+		ctx.restore();
+	}
 };
