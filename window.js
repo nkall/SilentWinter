@@ -59,19 +59,35 @@ WindowManager.prototype.activateButton = function (ctx, button){
 		this.gameMode = "Dialog";
 		var dialogData = this.prepareDialog();
 		this.drawDialog(ctx, dialogData)
+	} else if (button.txt == "Manage Base"){
+		this.gameMode = "Upgrade";
 	}
 };
 
 WindowManager.prototype.drawDialog = function (ctx, dialogData){
 	ctx.drawImage(gc.uiElementImgs[3], 0, 0);
 	this.drawPerson(ctx, 0);
-	populationGain = dialogData[0]
-	/*if (populationGain > 0){
-	} else if (populationGain === 0){
-
+	populationGain = dialogData[0];
+	text = "";
+	if (populationGain === 0){
+		text = "Harsh winter storms meant that there were no visitors.";
+	} else if (populationGain < 0){
+		text = ("The winter was devastating, with " + (-populationGain).toString() + 
+								" people dead from " + dialogData[1] + ".");
+	} else if (populationGain === 1){
+		text = "A lone wanderer came across your outpost, seeking refuge.";
+	} else if (populationGain < 10){
+		text = "A family of " + populationGain.toString() + " arrived at the bunker, seeking shelter.";
 	} else {
+		text = ("A small displaced village of " + populationGain.toString() +" people arrived at your outpost.");
+	}
 
-	}*/
+	ctx.save();
+	ctx.font = '16pt Helvetica';
+	ctx.fillStyle = '#FFFFFF';
+	ctx.fillText(text, 350, 225);
+	ctx.restore();
+
 	this.buttons[0].drawButton(ctx);
 };
 
@@ -82,7 +98,7 @@ WindowManager.prototype.prepareDialog = function (){
 	var causeOfDeath = null;
 	if (gs.base.inventory.food < 0 && gs.base.inventory.fuel < 0){
 		populationGain += gs.base.inventory.food + gs.base.inventory.fuel;
-		causeOfDeath = "starvation and hypothermia";
+		causeOfDeath = "hunger and cold";
 	} else if (gs.base.inventory.fuel < 0){
 		populationGain += gs.base.inventory.fuel
 		causeOfDeath = "hypothermia";
@@ -90,7 +106,7 @@ WindowManager.prototype.prepareDialog = function (){
 		populationGain += gs.base.inventory.food
 		causeOfDeath = "starvation";
 	} else {
-		populationGain = (Math.random() * 24) + 2;
+		populationGain = Math.floor(Math.random() * 23);
 	}
 	gs.base.population += populationGain;
 	if (gs.base.population < 1){
