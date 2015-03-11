@@ -115,7 +115,7 @@ function addKeyboardEvents(){
 		}
 	}, false);
 };
-
+/*
 var music = document.getElementById('backMusic');
 
 document.getElementById('mute').addEventListener('click', function (e)
@@ -134,4 +134,4 @@ document.getElementById('mute').addEventListener('click', function (e)
     music2.muted = !music2.muted;
     e.preventDefault();
 	music2.loop = true;
-}, false);
+}, false);*/

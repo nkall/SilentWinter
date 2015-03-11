@@ -43,6 +43,7 @@ Player.prototype.updateStatus = function() {
 	}
 	// Return to base if heat runs out
 	if (this.heat < 1){
+		this.base.addToInventory(gs.player.inventory);
 		wm.setupBaseMenu();
 		wm.gameMode = "Base";
 	}

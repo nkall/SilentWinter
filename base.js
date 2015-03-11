@@ -1,5 +1,5 @@
 function Base(){
-	this.inventory = new Inventory(10,10,0,0,0);
+	this.inventory = new Inventory(50,50,0,0,0);
 	this.population = 1;
 	this.img = gc.baseImg;
 	this.livingImgs = [gc.baseUpgradeImgs[0], gc.baseUpgradeImgs[1]];
@@ -14,13 +14,13 @@ function Base(){
 Base.prototype.drawBase = function(ctx) {
 	ctx.drawImage(this.img, 100, 30);
 	if (this.livingLvl > 0) {
-		ctx.drawImage(this.livingImgs[this.livingLvl], 30, 30);
+		ctx.drawImage(this.livingImgs[this.livingLvl - 1], 30, 30);
 	}
 	if (this.generatorLvl > 0) {
-		ctx.drawImage(this.generatorImgs[this.generatorLvl], 30, 30);
+		ctx.drawImage(this.generatorImgs[this.generatorLvl - 1], 30, 30);
 	}
 	if (this.greenhouseLvl > 0) {
-		ctx.drawImage(this.greenhouseImgs[this.greenhouseLvl], 30, 30);
+		ctx.drawImage(this.greenhouseImgs[this.greenhouseLvl - 1], 100, 29);
 	}
 };
 

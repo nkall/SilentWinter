@@ -19,6 +19,7 @@ function GameState(canvasWidth, canvasHeight){
 GameState.prototype.enterBuilding = function() {
 	var buildingLoc = this.currMap.getNearbyBuildingLocation(this.player.loc.toTiles());
 	if (this.mainMap.buildingIsBase(buildingLoc)){
+		this.base.addToInventory(gs.player.inventory);
 		wm.setupBaseMenu();
 		wm.gameMode = "Base";
 	} else if (buildingLoc !== null){

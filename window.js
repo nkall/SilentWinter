@@ -58,9 +58,49 @@ WindowManager.prototype.activateButton = function (ctx, button){
 	} else if (button.txt == "Next Season"){
 		this.gameMode = "Dialog";
 		var dialogData = this.prepareDialog();
-		this.drawDialog(ctx, dialogData)
+		this.drawDialog(ctx, dialogData);
 	} else if (button.txt == "Manage Base"){
 		this.gameMode = "Upgrade";
+		this.setupUpgradeMenu();
+		this.drawUpgradeMenu(ctx);
+	} else if (button.txt == 'Back'){
+		this.gameMode = "Base";
+		this.setupBaseMenu();
+		this.drawBaseMenu(ctx);
+	} else if (button.txt == "Upgrade Generators"){
+		var generatorScrapCost = 150; 
+		var generatorPartsCost = 100;
+		if (gs.base.generatorLvl == 1){
+			generatorScrapCost = 400;
+			generatorPartsCost = 250;
+		}
+		if ((gs.base.inventory.scrap >= generatorScrapCost) && 
+				(gs.base.inventory.parts >= generatorPartsCost) &&
+				gs.base.generatorLvl < 2){
+			gs.base.inventory.scrap -= generatorScrapCost;
+			gs.base.inventory.parts -= generatorPartsCost;
+			gs.base.generatorLvl++;
+			this.gameMode = "Base";
+			this.setupBaseMenu();
+			this.drawBaseMenu(ctx);
+		}
+	} else if (button.txt == "Upgrade Greenhouse"){
+		var greenhouseElectronicsCost = 200;
+		var greenhousePartsCost = 50;
+		if (gs.base.greenhouseLvl == 1){
+			greenhouseElectronicsCost = 450;
+			greenhousePartsCost = 200;
+		}
+		if ((gs.base.inventory.parts >= greenhousePartsCost) && 
+				(gs.base.inventory.elec >= greenhouseElectronicsCost) &&
+				gs.base.greenhouseLvl < 2){
+			gs.base.inventory.parts -= greenhousePartsCost;
+			gs.base.inventory.elec -= greenhouseElectronicsCost;
+			gs.base.greenhouseLvl++;
+			this.gameMode = "Base";
+			this.setupBaseMenu();
+			this.drawBaseMenu(ctx);
+		}
 	}
 };
 
@@ -121,7 +161,6 @@ WindowManager.prototype.prepareDialog = function (){
 };
 
 WindowManager.prototype.setupBaseMenu = function (){
-	gs.base.addToInventory(gs.player.inventory);
 	this.buttons = new Array();
 	this.buttons[this.buttons.length] = new Button(new Coord(550,240), 
 					gc.uiElementImgs[1], "Manage Base", new Coord(400, 100));
@@ -197,6 +236,84 @@ WindowManager.prototype.draw = function (ctx){
 	}
 };
 
+WindowManager.prototype.setupUpgradeMenu = function(){
+	this.buttons = new Array();
+	if (gs.base.generatorLvl < 2){
+		this.buttons[this.buttons.length] = new Button(new Coord(300, 275), 
+					gc.uiElementImgs[1], "Upgrade Generators", new Coord(450, 100));
+	}
+	if (gs.base.greenhouseLvl < 2){
+		this.buttons[this.buttons.length] = new Button(new Coord(300, 375), 
+					gc.uiElementImgs[1], "Upgrade Greenhouse", new Coord(450, 100));
+	}
+	this.buttons[this.buttons.length] = new Button(new Coord(800,275), 
+					gc.uiElementImgs[1], "Back", new Coord(200, 200));
+};
+
+// Long lines ahoy
+WindowManager.prototype.drawUpgradeMenu = function(ctx){
+	// Calc Production
+	var foodProduction = 15;
+	var fuelProduction = 15;
+	if (gs.base.greenhouseLvl === 1){
+		foodProduction = 50;
+	} else if (gs.base.greenhouseLvl === 2){
+		foodProduction = 150;
+	}
+	if (gs.base.generatorLvl === 1){
+		fuelProduction = 50;
+	} else if (gs.base.generatorLvl === 2){
+		fuelProduction = 150;
+	}
+
+	ctx.drawImage(gc.uiElementImgs[2], 0, 0);
+	ctx.save();
+	ctx.font = '16pt Helvetica';
+	ctx.fillStyle = '#FFFFFF';
+	ctx.fillText("Supply                 Stock                Production              Net Gain/Loss", 350, 50);
+	ctx.fillText("Food:                     " + gs.base.inventory.food.toString() + "                       " + 
+		foodProduction.toString() + "                                " + (foodProduction - gs.base.population).toString(), 350, 90);
+	ctx.fillText("Fuel:                      " + gs.base.inventory.fuel.toString() + "                       " + 
+		fuelProduction.toString() + "                                " + (fuelProduction - gs.base.population).toString(), 350, 130);
+	ctx.fillText("Electronics:            " + gs.base.inventory.elec.toString() + "                         - " + 
+		"                                  -", 350, 170);
+	ctx.fillText("Scrap:                    " + gs.base.inventory.scrap.toString() + "                         - " + 
+		"                                  -", 350, 210);
+	ctx.fillText("Parts:                     " + gs.base.inventory.parts.toString() + "                         - " + 
+		"                                  -", 350, 250);
+	ctx.font = '20pt Helvetica';
+	ctx.fillText("Population:", 100, 50);
+	ctx.font = '32pt Helvetica';
+	ctx.fillText(gs.base.population.toString(), 150, 130);
+	ctx.restore();
+	for (var i = 0; i < this.buttons.length; i++){
+		this.buttons[i].drawButton(ctx);
+	}
+
+	ctx.font = '12pt Helvetica';
+	// Calculate upgrade costs
+	var greenhouseElectronicsCost = 200;
+	var greenhousePartsCost = 50;
+	if (gs.base.greenhouseLvl == 1){
+		greenhouseElectronicsCost = 450;
+		greenhousePartsCost = 200;
+	}
+	var generatorScrapCost = 150; 
+	var generatorPartsCost = 100;
+	if (gs.base.generatorLvl == 1){
+		generatorScrapCost = 400;
+		generatorPartsCost = 250;
+	}
+	if (gs.base.generatorLvl < 2){
+		ctx.fillText("Cost: " + generatorScrapCost.toString() + " scrap, " + generatorPartsCost.toString() + " parts", 425, 360);
+	}
+	if (gs.base.greenhouseLvl < 2){
+		ctx.fillText("Cost: " + greenhouseElectronicsCost.toString() + " electronics, " + greenhousePartsCost.toString() + " parts", 415, 460);
+	}
+
+	this.drawPerson(ctx, 1);
+};
+
 function Button(loc, img, txt, imgSize){
 	this.loc = loc;
 	this.img = img;
@@ -220,8 +337,4 @@ Button.prototype.drawButton = function(ctx) {
 	ctx.fillText(this.txt, this.loc.x + this.imgSize.x / 2, this.loc.y + this.imgSize.y / 2 + 10);
 
 	ctx.restore();
-};
-
-Button.prototype.detectClick = function(loc) {
-	
 };
