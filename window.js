@@ -68,11 +68,11 @@ WindowManager.prototype.activateButton = function (ctx, button){
 		this.setupBaseMenu();
 		this.drawBaseMenu(ctx);
 	} else if (button.txt == "Upgrade Generators"){
-		var generatorScrapCost = 150; 
-		var generatorPartsCost = 100;
+		var generatorScrapCost = 100; 
+		var generatorPartsCost = 50;
 		if (gs.base.generatorLvl == 1){
-			generatorScrapCost = 400;
-			generatorPartsCost = 250;
+			generatorScrapCost = 250;
+			generatorPartsCost = 100;
 		}
 		if ((gs.base.inventory.scrap >= generatorScrapCost) && 
 				(gs.base.inventory.parts >= generatorPartsCost) &&
@@ -85,11 +85,11 @@ WindowManager.prototype.activateButton = function (ctx, button){
 			this.drawBaseMenu(ctx);
 		}
 	} else if (button.txt == "Upgrade Greenhouse"){
-		var greenhouseElectronicsCost = 200;
+		var greenhouseElectronicsCost = 100;
 		var greenhousePartsCost = 50;
 		if (gs.base.greenhouseLvl == 1){
-			greenhouseElectronicsCost = 450;
-			greenhousePartsCost = 200;
+			greenhouseElectronicsCost = 250;
+			greenhousePartsCost = 100;
 		}
 		if ((gs.base.inventory.parts >= greenhousePartsCost) && 
 				(gs.base.inventory.elec >= greenhouseElectronicsCost) &&
@@ -133,24 +133,28 @@ WindowManager.prototype.drawDialog = function (ctx, dialogData){
 
 WindowManager.prototype.prepareDialog = function (){
 	gs.base.updateBaseSupplies();
-	console.log(gs.base.inventory)
 	var populationGain = 0;
 	var causeOfDeath = null;
 	if (gs.base.inventory.food < 0 && gs.base.inventory.fuel < 0){
-		populationGain += gs.base.inventory.food + gs.base.inventory.fuel;
+		populationGain += Math.max(gs.base.inventory.food, gs.base.inventory.fuel);
 		causeOfDeath = "hunger and cold";
+		gs.base.inventory.food = 0;
+		gs.base.inventory.fuel = 0;
 	} else if (gs.base.inventory.fuel < 0){
 		populationGain += gs.base.inventory.fuel
 		causeOfDeath = "hypothermia";
+		gs.base.inventory.fuel = 0;
 	} else if (gs.base.inventory.food < 0){
 		populationGain += gs.base.inventory.food
 		causeOfDeath = "starvation";
+		gs.base.inventory.food = 0;
 	} else {
 		populationGain = Math.floor(Math.random() * 23);
 	}
 	gs.base.population += populationGain;
+
 	if (gs.base.population < 1){
-		populationGain -= gs.base.population - 2;
+		populationGain -= gs.base.population - 1;
 		gs.base.population = 1;
 	}
 
@@ -253,17 +257,17 @@ WindowManager.prototype.setupUpgradeMenu = function(){
 // Long lines ahoy
 WindowManager.prototype.drawUpgradeMenu = function(ctx){
 	// Calc Production
-	var foodProduction = 15;
-	var fuelProduction = 15;
+	var foodProduction = 5;
+	var fuelProduction = 5;
 	if (gs.base.greenhouseLvl === 1){
-		foodProduction = 50;
+		foodProduction = 25;
 	} else if (gs.base.greenhouseLvl === 2){
-		foodProduction = 150;
+		foodProduction = 50;
 	}
 	if (gs.base.generatorLvl === 1){
-		fuelProduction = 50;
+		fuelProduction = 25;
 	} else if (gs.base.generatorLvl === 2){
-		fuelProduction = 150;
+		fuelProduction = 50;
 	}
 
 	ctx.drawImage(gc.uiElementImgs[2], 0, 0);
@@ -292,17 +296,17 @@ WindowManager.prototype.drawUpgradeMenu = function(ctx){
 
 	ctx.font = '12pt Helvetica';
 	// Calculate upgrade costs
-	var greenhouseElectronicsCost = 200;
+	var greenhouseElectronicsCost = 100;
 	var greenhousePartsCost = 50;
 	if (gs.base.greenhouseLvl == 1){
-		greenhouseElectronicsCost = 450;
-		greenhousePartsCost = 200;
+		greenhouseElectronicsCost = 250;
+		greenhousePartsCost = 100;
 	}
-	var generatorScrapCost = 150; 
-	var generatorPartsCost = 100;
+	var generatorScrapCost = 100; 
+	var generatorPartsCost = 50;
 	if (gs.base.generatorLvl == 1){
-		generatorScrapCost = 400;
-		generatorPartsCost = 250;
+		generatorScrapCost = 250;
+		generatorPartsCost = 100;
 	}
 	if (gs.base.generatorLvl < 2){
 		ctx.fillText("Cost: " + generatorScrapCost.toString() + " scrap, " + generatorPartsCost.toString() + " parts", 425, 360);

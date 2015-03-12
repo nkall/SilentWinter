@@ -19,8 +19,9 @@ function Player(x, y){
 	this.isPressingDown = false;
 	this.isPressingLeft = false;
 	this.isPressingRight = false;
+
 	// Pixels moved per frame
-	this.moveSpeed = 2;
+	this.moveSpeed = 4;
 
 	this.heat = 5000;
 	this.heatBar = new HeatBar(this.heat);
@@ -43,7 +44,7 @@ Player.prototype.updateStatus = function() {
 	}
 	// Return to base if heat runs out
 	if (this.heat < 1){
-		this.base.addToInventory(gs.player.inventory);
+		gs.base.addToInventory(gs.player.inventory);
 		wm.setupBaseMenu();
 		wm.gameMode = "Base";
 	}
@@ -135,7 +136,7 @@ HeatBar.prototype.updateHeatBar = function(heat){
 };
 
 HeatBar.prototype.drawHeatBar = function(ctx){
-	ctx.drawImage(gc.heatImgs[0], 0, 0);
+	ctx.drawImage(gc.heatImgs[0], 0, 0, this.barWidth, this.barHeight);
 	ctx.drawImage(gc.heatImgs[1], 0, 0, this.barFillLevel, this.barHeight, 0, 0, 
 												this.barFillLevel, this.barHeight);
 	if (this.barFillLevel < 90){

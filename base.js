@@ -14,13 +14,13 @@ function Base(){
 Base.prototype.drawBase = function(ctx) {
 	ctx.drawImage(this.img, 100, 30);
 	if (this.livingLvl > 0) {
-		ctx.drawImage(this.livingImgs[this.livingLvl - 1], 30, 30);
+		ctx.drawImage(this.livingImgs[this.livingLvl - 1], 100, 30);
 	}
 	if (this.generatorLvl > 0) {
-		ctx.drawImage(this.generatorImgs[this.generatorLvl - 1], 30, 30);
+		ctx.drawImage(this.generatorImgs[this.generatorLvl - 1], 100, 30);
 	}
 	if (this.greenhouseLvl > 0) {
-		ctx.drawImage(this.greenhouseImgs[this.greenhouseLvl - 1], 100, 29);
+		ctx.drawImage(this.greenhouseImgs[this.greenhouseLvl - 1], 100, 30);
 	}
 };
 
@@ -28,23 +28,23 @@ Base.prototype.updateBaseSupplies = function (){
 	this.inventory.food -= this.population;
 	this.inventory.fuel -= this.population;
 	if (this.generatorLvl === 0){
-		this.inventory.fuel += 15;
+		this.inventory.fuel += 5;
 	} else if (this.generatorLvl === 1){
-		this.inventory.fuel += 50;
+		this.inventory.fuel += 25;
 	} else if (this.generatorLvl === 2){
-		this.inventory.fuel += 150;
+		this.inventory.fuel += 50;
 	}
 
 	if (this.greenhouseLvl === 0){
-		this.inventory.food += 15;
+		this.inventory.food += 5;
 	} else if (this.greenhouseLvl === 1){
-		this.inventory.food += 50;
+		this.inventory.food += 25;
 	} else if (this.greenhouseLvl === 2){
-		this.inventory.food += 150;
+		this.inventory.food += 50;
 	}
-	if (this.population < 25){
+	if (this.population < 15){
 		this.livingLvl = 0;
-	} else if (this.population < 75){
+	} else if (this.population < 30){
 		this.livingLvl = 1;
 	} else {
 		this.livingLvl = 2;

@@ -70,7 +70,7 @@ Map.prototype.addBuildings = function (){
 		var buildingLoc = new Coord(Math.floor(Math.random() * this.mapSize.x),
 								Math.floor(Math.random() * this.mapSize.y));
 		// Generate random obstacle image
-		var buildingImgIndex = Math.floor(Math.random() * gc.buildingImgs.length);
+		var buildingImgIndex = Math.floor(Math.random() * (gc.buildingImgs.length - 1)) + 1;
 		this.addObstacle(buildingLoc, gc.buildingImgs[buildingImgIndex], true);
 	}
 };
